@@ -1,11 +1,17 @@
 # Angular workspace
-
 ### Install PNPM 
 
 [Click here](https://pnpm.io/installation)
 
-
+### Before run
+```
+pnpm exec prisma db push
+```
 ### To start server
 ```
-pnpm run dev:ssr
+pnpm dev:ssr
+```
+### View DB
+```
+pnpm db:studio
 ```
