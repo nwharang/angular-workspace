@@ -2,7 +2,7 @@
 
 ### Install PNPM 
 ```
-[Clickhere][(https://link-url-here.org](https://pnpm.io/installation))
+[Clickhere][(https://link-url-here.org](https://pnpm.io/installation)
 ```
 
 ### To start server
