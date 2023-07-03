@@ -1,4 +1,4 @@
-# Angularworkspace
+# Angular workspace
 
 ### To start server
 ```
