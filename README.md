@@ -1,6 +1,6 @@
 # Angularworkspace
 
-** To start server **
+### To start server
 ```
 pnpm run dev:ssr
 ```
