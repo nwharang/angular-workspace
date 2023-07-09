@@ -8,8 +8,9 @@ import { ngExpressEngine } from '@nguniversal/express-engine';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { AppServerModule } from '../app/src/main.server';
-import { createContext } from './src/lib/trpc';
-import { appRouter } from './src';
+import { appRouter } from './src/Router';
+import { createContext } from '~server/Utils/trpc.utils';
+import cookieParser from 'cookie-parser';
 
 export function app(): express.Express {
   const server = express();
@@ -18,6 +19,7 @@ export function app(): express.Express {
     ? 'index.original.html'
     : 'index';
 
+  server.use(cookieParser());
   server.use(cors());
 
   server.engine(
@@ -42,7 +44,7 @@ export function app(): express.Express {
     '/trpc',
     trpcExpress.createExpressMiddleware({
       router: appRouter,
-      createContext: createContext,
+      createContext,
     })
   );
 

@@ -1,22 +1,21 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
-import { MainComponent } from './layout/main/main.component';
-import { SidebarComponent } from './layout/components/sidebar/sidebar.component';
-import { DashboardComponent } from './page/dashboard/dashboard.component';
-
+import { MainComponent } from './layout/main.component';
+import { DashboardComponent } from './page/dashboard.component';
+import { LocalizationPipe } from './Pipe/localization.pipe';
+import { InfoComponent } from './page/info.component';
 
 @NgModule({
   declarations: [
     MainComponent,
-    SidebarComponent,
-    DashboardComponent
+    DashboardComponent,
+    LocalizationPipe,
+    InfoComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
+  imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
   providers: [],
-  bootstrap: [MainComponent]
+  bootstrap: [MainComponent],
 })
-export class AppModule { }
+export class AppModule {}
