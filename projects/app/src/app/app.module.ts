@@ -3,16 +3,16 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { MainComponent } from './layout/main.component';
-import { DashboardComponent } from './page/dashboard.component';
+import { LoginComponent } from './page/login.component';
 import { LocalizationPipe } from './Pipe/localization.pipe';
-import { InfoComponent } from './page/info.component';
+import { HomeComponent } from './page/home.component';
 
 @NgModule({
   declarations: [
     MainComponent,
-    DashboardComponent,
+    LoginComponent,
     LocalizationPipe,
-    InfoComponent,
+    HomeComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
   providers: [],

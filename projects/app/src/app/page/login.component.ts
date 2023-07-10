@@ -1,13 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { trpc } from '~app/src/trpcClient';
 import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-login',
   template: `
     <div class="container pt-5" style="max-width: 24rem;">
       <div *ngIf="error" class="text-danger">{{ error }}</div>
-      <form #form="ngForm" (ngSubmit)="handleSubmit($event, form)">
+      <form
+        *ngIf="showLoginPanel"
+        #form="ngForm"
+        (ngSubmit)="handleSubmit($event, form)"
+      >
         <!-- Email input -->
         <div class="form-outline mb-4">
           <input type="text" class="form-control" name="email" ngModel />
@@ -42,15 +47,31 @@ import { NgForm } from '@angular/forms';
     </div>
   `,
 })
-export class DashboardComponent {
+export class LoginComponent implements OnInit {
   error: string | null = null;
+  showLoginPanel = false;
 
+  constructor(private router: Router) {}
+  ngOnInit(): void {
+    trpc.auth.authenticate
+      .mutate()
+      .then(() => {
+        this.error = 'Logged In\nRederecting to home page in 3 seconds'; // Localize
+        setTimeout(() => this.router.navigate(['/']), 3000);
+      })
+      .catch(() => (this.showLoginPanel = true));
+  }
   async handleSubmit(e: Event, form: NgForm) {
     e.preventDefault();
     const { email, password } = form.value;
-    await trpc.auth.login.mutate({ email, password }).catch((err: Error) => {
-      this.error = err.message;
-    });
+    await trpc.auth.login
+      .mutate({ email, password })
+      .catch((err: Error) => {
+        this.error = err.message;
+      })
+      .then(() => {
+        this.router.navigate(['/']);
+      });
   }
   resetDefault(form: NgForm) {
     form.resetForm();
