@@ -3,9 +3,8 @@ import { router } from '~server/Utils/trpc.utils';
 import { z } from 'zod';
 import { publicProcedure } from '~server/Utils/trpc.utils';
 import * as jwt from 'jsonwebtoken';
-import { AuthMiddleware } from '~server/Middleware/Auth.Middleware';
 import { TRPCError } from '@trpc/server';
-
+import { User } from '@prisma/client';
 const TOKENKEY = 'TEST';
 
 export const authRoute = router({
@@ -38,22 +37,15 @@ export const authRoute = router({
       TOKENKEY
     )) as jwt.JwtPayload;
 
-    const checkUser = await ctx.prisma.user.findUnique({
+    const checkUser = (await ctx.prisma.user.findUnique({
       where: {
         email: res.email,
       },
-    });
+    })) as unknown as User;
     if (checkUser)
       return {
-        message: 'Success',
+        localize: checkUser.localize,
       };
     else throw new TRPCError({ code: 'UNAUTHORIZED' });
-  }),
-  test: publicProcedure.use(AuthMiddleware).query(({ ctx }) => {
-    console.log('Ctx', ctx);
-
-    return {
-      message: 'Success',
-    };
   }),
 });

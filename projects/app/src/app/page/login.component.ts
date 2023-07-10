@@ -75,6 +75,5 @@ export class LoginComponent implements OnInit {
   }
   resetDefault(form: NgForm) {
     form.resetForm();
-    trpc.auth.test.query();
   }
 }

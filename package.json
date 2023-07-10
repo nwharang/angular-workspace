@@ -9,7 +9,8 @@
     "dev:ssr": "ng run app:serve-ssr",
     "serve:ssr": "node dist/app/server/main.js",
     "build:ssr": "ng build && ng run app:server",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate"
   },
   "private": true,
   "dependencies": {
@@ -23,6 +24,8 @@
     "@angular/platform-server": "^16.1.4",
     "@angular/router": "^16.1.4",
     "@nguniversal/express-engine": "^16.1.1",
+    "@ngx-translate/core": "^15.0.0",
+    "@ngx-translate/http-loader": "^8.0.0",
     "@prisma/client": "^4.16.2",
     "@trpc/client": "^10.34.0",
     "@trpc/server": "^10.34.0",
