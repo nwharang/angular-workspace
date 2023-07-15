@@ -5,16 +5,16 @@ import { trpc } from '~app/src/trpcClient';
   providedIn: 'root',
 })
 export class AuthService {
-  isAuth = false;
+  isAuth: Promise<boolean>;
   localize = 'en';
   constructor() {
-    this.authenticate();
+    this.isAuth = trpc.auth.authenticate
+      .mutate()
+      .then(({ localize, authenticate }) => {
+        this.localize = localize;
+        return authenticate;
+      });
   }
 
-  authenticate() {
-    trpc.auth.authenticate.mutate().then(({ localize, authenticate }) => {
-      this.localize = localize;
-      this.isAuth = authenticate;
-    });
-  }
+  authenticate() {}
 }

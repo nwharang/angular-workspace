@@ -23,22 +23,12 @@ import { Router } from '@angular/router';
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <!-- Navbar brand -->
-          <a class="navbar-brand mt-2 mt-lg-0 comingsoon fw-bolder" href="#">
+          <a
+            class="navbar-brand mt-2 mt-lg-0 comingsoon fw-bolder"
+            routerLink="/home"
+          >
             Ten Trang Web
           </a>
-          <!-- Left links -->
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li *ngFor="let item of navList">
-              <a
-                [routerLink]="[item.url]"
-                routerLinkActive="btn-outline-primary"
-                class="btn"
-              >
-                {{ item.text | translate }}
-              </a>
-            </li>
-          </ul>
-          <!-- Left links -->
         </div>
         <form class="d-flex input-group w-auto gap-3 align-items-center">
           <span class="input-group-text border-0" id="search-addon">
@@ -58,7 +48,7 @@ import { Router } from '@angular/router';
             </button>
           </span>
           <div>
-            <ng-container *ngIf="authService.isAuth; else elseTemplate">
+            <ng-container *ngIf="signIn; else elseTemplate">
               <button type="button" class="btn btn-primary" (click)="logout()">
                 {{ 'SignOut' | translate }}
               </button>
@@ -85,16 +75,16 @@ import { Router } from '@angular/router';
   styles: ['.comingsoon {font-family : "Coming Soon"}'],
 })
 export class MainComponent implements OnInit {
-  public navList = [
-    { url: '/home', text: 'Home' },
-    { url: '/project', text: 'Project' },
-    { url: '/team', text: 'Team' },
-  ];
+  signIn = false;
   constructor(
     public translate: TranslateService,
     public authService: AuthService,
     private router: Router
-  ) {}
+  ) {
+    this.authService.isAuth.then((res) => {
+      this.signIn = res;
+    });
+  }
   ngOnInit(): void {
     this.initTranslating();
   }
@@ -128,10 +118,5 @@ export class MainComponent implements OnInit {
 
   async search(param: string) {
     console.log(param);
-  }
-
-  async navigate(value: string) {
-    console.log(value);
-    this.router.navigate([value]);
   }
 }

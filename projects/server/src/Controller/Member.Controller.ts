@@ -1,19 +1,44 @@
 // import { TRPCError } from '@trpc/server';
-import { Member } from '@prisma/client';
+import { InvitationStatus } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 import { authContext } from '~server/Middleware/Auth.Middleware';
 
 export default class MemberController {
   async getAllList(ctx: authContext) {
-    const memberList = (await ctx.prisma.member.findMany({
+    const memberList = await ctx.prisma.member.findMany({
       where: {
-        userId: ctx.user.id,
+        AND: [{ userId: ctx.user.id }, { InvitationStatus: 'Pending' }],
       },
       include: {
         Project: true,
       },
-    })) as unknown as Member[];
+    });
     return {
       data: memberList,
     };
+  }
+
+  async invitation(
+    ctx: authContext,
+    input: { projectId: string; status: InvitationStatus }
+  ) {
+    const member = await ctx.prisma.member.findFirst({
+      where: {
+        projectId: input.projectId,
+        userId: ctx.user.id,
+      },
+    });
+    if (member) {
+      await ctx.prisma.member.update({
+        where: {
+          id: member.id,
+        },
+        data: {
+          InvitationStatus: input.status,
+        },
+      });
+      return await this.getAllList(ctx);
+    }
+    throw new TRPCError({ code: 'NOT_FOUND' });
   }
 }

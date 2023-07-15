@@ -21,7 +21,13 @@ import { AuthService } from '../services/auth.service';
 
         <!-- Email input -->
         <div class="form-outline mb-4">
-          <input type="text" class="form-control" name="email" ngModel />
+          <input
+            type="text"
+            class="form-control"
+            autocomplete="on"
+            name="email"
+            ngModel
+          />
           <label class="form-label">Email address</label>
         </div>
 
@@ -58,8 +64,8 @@ export class RegisterComponent implements OnInit {
   showLoginPanel = false;
 
   constructor(private authService: AuthService) {}
-  ngOnInit(): void {
-    if (this.authService.isAuth) {
+  async ngOnInit(): Promise<void> {
+    if (await this.authService.isAuth) {
       this.error = 'Logged In\nRederecting to home page in 3 seconds'; // Localize
     } else this.showLoginPanel = true;
   }

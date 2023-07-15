@@ -11,6 +11,8 @@ import { RegisterComponent } from './page/register.component';
 import { trpc } from '../trpcClient';
 import { Observable, Observer } from 'rxjs';
 import { Localize } from '@prisma/client';
+import { ProjectComponent } from './page/project.component';
+import { TeamComponent } from './page/team.component';
 
 export function HttpLoaderFactory() {
   class TranslationProviderService implements TranslateLoader {
@@ -31,6 +33,8 @@ export function HttpLoaderFactory() {
     LoginComponent,
     HomeComponent,
     RegisterComponent,
+    ProjectComponent,
+    TeamComponent,
   ],
   imports: [
     BrowserModule,
