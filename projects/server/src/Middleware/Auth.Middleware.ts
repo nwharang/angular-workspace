@@ -7,6 +7,8 @@ const TOKENKEY = 'TEST';
 
 export const AuthMiddleware = middleware(async (opts) => {
   const { ctx } = opts;
+  if (!ctx.req.cookies['access_token'])
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
   const res = (await jwt.verify(
     ctx.req.cookies['access_token'],
     TOKENKEY

@@ -3,8 +3,7 @@ import { router } from '~server/Utils/trpc.utils';
 import { z } from 'zod';
 import { publicProcedure } from '~server/Utils/trpc.utils';
 import * as jwt from 'jsonwebtoken';
-import { TRPCError } from '@trpc/server';
-import { User } from '@prisma/client';
+import { Localize, User } from '@prisma/client';
 const TOKENKEY = 'TEST';
 
 export const authRoute = router({
@@ -29,9 +28,15 @@ export const authRoute = router({
     .mutation(({ ctx, input }) => {
       return new AuthController().register(ctx, input);
     }),
+  logout: publicProcedure.mutation(({ ctx }) => {
+    return new AuthController().logout(ctx);
+  }),
   authenticate: publicProcedure.mutation(async ({ ctx }) => {
     if (!ctx.req.cookies['access_token'])
-      throw new TRPCError({ code: 'UNAUTHORIZED' });
+      return {
+        localize: Localize.en,
+        authenticate: false,
+      };
     const res = (await jwt.verify(
       ctx.req.cookies['access_token'],
       TOKENKEY
@@ -44,8 +49,12 @@ export const authRoute = router({
     })) as unknown as User;
     if (checkUser)
       return {
-        localize: checkUser.localize,
+        localize: checkUser.localize || Localize.en,
+        authenticate: true,
       };
-    else throw new TRPCError({ code: 'UNAUTHORIZED' });
+    return {
+      localize: Localize.en,
+      authenticate: false,
+    };
   }),
 });

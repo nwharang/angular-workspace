@@ -7,13 +7,31 @@ import { LoginComponent } from './page/login.component';
 import { HomeComponent } from './page/home.component';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { RegisterComponent } from './page/register.component';
+import { trpc } from '../trpcClient';
+import { Observable, Observer } from 'rxjs';
+import { Localize } from '@prisma/client';
 
-export function HttpLoaderFactory(httpClient: HttpClient) {
-  return new TranslateHttpLoader(httpClient);
+export function HttpLoaderFactory() {
+  class TranslationProviderService implements TranslateLoader {
+    getTranslation(lang: Localize) {
+      return Observable.create((observer: Observer<Buffer>) => {
+        trpc.localize[lang as Localize].query().then((res) => {
+          observer.next(res);
+          observer.complete();
+        });
+      });
+    }
+  }
+  return new TranslationProviderService();
 }
 @NgModule({
-  declarations: [MainComponent, LoginComponent, HomeComponent],
+  declarations: [
+    MainComponent,
+    LoginComponent,
+    HomeComponent,
+    RegisterComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -21,6 +39,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     ReactiveFormsModule,
     HttpClientModule,
     TranslateModule.forRoot({
+      defaultLanguage: 'en',
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,

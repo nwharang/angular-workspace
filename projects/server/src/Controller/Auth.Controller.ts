@@ -76,4 +76,10 @@ export default class AuthController {
     };
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
+  async logout(ctx: Context) {
+    ctx.res.clearCookie('access_token', {
+      path: '/',
+    });
+    return;
+  }
 }

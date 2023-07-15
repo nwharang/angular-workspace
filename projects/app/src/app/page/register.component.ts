@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { trpc } from '~app/src/trpcClient';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+
 @Component({
-  selector: 'app-login',
+  selector: 'app-register',
   template: `
     <div class="container pt-5" style="max-width: 24rem;">
       <div *ngIf="error" class="text-danger">{{ error }}</div>
@@ -13,22 +13,28 @@ import { AuthService } from '../services/auth.service';
         #form="ngForm"
         (ngSubmit)="handleSubmit($event, form)"
       >
+        <!-- Name input -->
+        <div class="form-outline mb-4">
+          <input type="text" class="form-control" name="name" ngModel />
+          <label class="form-label">Name</label>
+        </div>
+
         <!-- Email input -->
         <div class="form-outline mb-4">
           <input type="text" class="form-control" name="email" ngModel />
-          <label class="form-label" for="form2Example1">Email address</label>
+          <label class="form-label">Email address</label>
         </div>
 
         <!-- Password input -->
         <div class="form-outline mb-4">
           <input type="password" class="form-control" name="password" ngModel />
-          <label class="form-label" for="form2Example2">Password</label>
+          <label class="form-label">Password</label>
         </div>
 
         <!-- Submit button -->
         <div class="d-flex gap-3">
           <button type="submit" class="btn btn-primary btn-block mb-4">
-            Sign in
+            Register
           </button>
           <button
             type="button"
@@ -41,17 +47,17 @@ import { AuthService } from '../services/auth.service';
 
         <!-- Register buttons -->
         <div class="text-center">
-          <p>Not a member? <a href="#">Register</a></p>
+          <p>Have account <a href="#">Login</a></p>
         </div>
       </form>
     </div>
   `,
 })
-export class LoginComponent implements OnInit {
+export class RegisterComponent implements OnInit {
   error: string | null = null;
   showLoginPanel = false;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private authService: AuthService) {}
   ngOnInit(): void {
     if (this.authService.isAuth) {
       this.error = 'Logged In\nRederecting to home page in 3 seconds'; // Localize
@@ -59,9 +65,9 @@ export class LoginComponent implements OnInit {
   }
   async handleSubmit(e: Event, form: NgForm) {
     e.preventDefault();
-    const { email, password } = form.value;
-    await trpc.auth.login
-      .mutate({ email, password })
+    const { email, password, name } = form.value;
+    await trpc.auth.register
+      .mutate({ email, password, name })
       .catch((err: Error) => {
         this.error = err.message;
       })
