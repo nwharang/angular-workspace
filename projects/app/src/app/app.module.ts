@@ -13,6 +13,8 @@ import { Observable, Observer } from 'rxjs';
 import { Localize } from '@prisma/client';
 import { ProjectComponent } from './page/project.component';
 import { TeamComponent } from './page/team.component';
+import { DetailTaskComponent } from './page/detailTask.component';
+import { NewTaskComponent } from './page/newtask.component';
 
 export function HttpLoaderFactory() {
   class TranslationProviderService implements TranslateLoader {
@@ -35,6 +37,8 @@ export function HttpLoaderFactory() {
     RegisterComponent,
     ProjectComponent,
     TeamComponent,
+    DetailTaskComponent,
+    NewTaskComponent
   ],
   imports: [
     BrowserModule,
