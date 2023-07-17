@@ -39,4 +39,34 @@ export const projectRoute = router({
     .mutation(({ ctx, input }) => {
       return new ProjectController().addMember(ctx, input);
     }),
+  getMember: publicProcedure
+    .use(AuthMiddleware)
+    .input(
+      z.object({
+        projectId: z.string(),
+      })
+    )
+    .query(({ ctx, input }) => {
+      return new ProjectController().getMemberByProjectId(ctx, input);
+    }),
+  removeMember: publicProcedure
+    .use(AuthMiddleware)
+    .input(
+      z.object({
+        memberId: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return new ProjectController().removeMember(ctx, input);
+    }),
+  isOwner: publicProcedure
+    .use(AuthMiddleware)
+    .input(
+      z.object({
+        projectId: z.string(),
+      })
+    )
+    .query(({ ctx, input }) => {
+      return new ProjectController().isOwner(ctx, input);
+    }),
 });

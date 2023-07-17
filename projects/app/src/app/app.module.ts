@@ -11,10 +11,11 @@ import { RegisterComponent } from './page/register.component';
 import { trpc } from '../trpcClient';
 import { Observable, Observer } from 'rxjs';
 import { Localize } from '@prisma/client';
-import { ProjectComponent } from './page/project.component';
-import { TeamComponent } from './page/team.component';
-import { DetailTaskComponent } from './page/detailTask.component';
-import { NewTaskComponent } from './page/newtask.component';
+import { ProjectComponent } from './page/project/index.component';
+import { DetailTaskComponent } from './page/project/component/detailTask.component';
+import { NewTaskComponent } from './page/project/component/newtask.component';
+import { MemberComponent } from './page/project/component/member.component';
+import { TaskComponent } from './page/project/component/task.component';
 
 export function HttpLoaderFactory() {
   class TranslationProviderService implements TranslateLoader {
@@ -36,9 +37,10 @@ export function HttpLoaderFactory() {
     HomeComponent,
     RegisterComponent,
     ProjectComponent,
-    TeamComponent,
     DetailTaskComponent,
-    NewTaskComponent
+    NewTaskComponent,
+    MemberComponent,
+    TaskComponent,
   ],
   imports: [
     BrowserModule,

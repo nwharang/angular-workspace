@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-
+import { Component, EventEmitter, Output } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Status } from '@prisma/client';
 @Component({
   selector: 'app-newtask',
   styles: [``],
@@ -12,7 +13,11 @@ import { Component } from '@angular/core';
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog">
+      <form
+        #frm="ngForm"
+        (ngSubmit)="createNewTask($event, frm)"
+        class="modal-dialog"
+      >
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="exampleModalLabel">New Task</h1>
@@ -24,23 +29,25 @@ import { Component } from '@angular/core';
             ></button>
           </div>
           <div class="modal-body">
-            <form>
+            <div>
               <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="name"
+                  name="name"
                   placeholder="Task name"
+                  [(ngModel)]="data.name"
                 />
               </div>
               <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
                 <textarea
                   class="form-control"
-                  id="description"
+                  name="description"
                   rows="3"
                   placeholder="Task description"
+                  [(ngModel)]="data.description"
                 ></textarea>
               </div>
               <div class="mb-3">
@@ -48,8 +55,9 @@ import { Component } from '@angular/core';
                 <input
                   type="date"
                   class="form-control"
-                  id="effDate"
+                  name="effDate"
                   placeholder="Task name"
+                  [(ngModel)]="data.effDate"
                 />
               </div>
               <div class="mb-3">
@@ -57,11 +65,12 @@ import { Component } from '@angular/core';
                 <input
                   type="date"
                   class="form-control"
-                  id="endDate"
+                  name="endDate"
                   placeholder="Task name"
+                  [(ngModel)]="data.endDate"
                 />
               </div>
-            </form>
+            </div>
           </div>
           <div class="modal-footer">
             <button
@@ -71,11 +80,38 @@ import { Component } from '@angular/core';
             >
               Close
             </button>
-            <button type="button" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary">Save</button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   `,
 })
-export class NewTaskComponent {}
+export class NewTaskComponent {
+  @Output() newTask = new EventEmitter();
+  data: {
+    name: string;
+    description: string | null;
+    status: Status;
+    effDate: Date;
+    endDate: Date;
+  } = {
+    name: '',
+    description: null,
+    status: Status.Backlog,
+    effDate: new Date(),
+    endDate: new Date(),
+  };
+  // <{
+  //   name: string;
+  //   description: string | null;
+  //   status: Status;
+  //   effDate: Date;
+  //   endDate: Date;
+  // }>
+  createNewTask(e: Event, frm: NgForm) {
+    e.preventDefault();
+
+    console.log(frm);
+  }
+}

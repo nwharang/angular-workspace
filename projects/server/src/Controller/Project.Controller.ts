@@ -121,4 +121,50 @@ export default class ProjectController {
       message: res ? 'Success' : 'Error',
     };
   }
+  async getMemberByProjectId(ctx: authContext, input: { projectId: string }) {
+    const res = await ctx.prisma.member.findMany({
+      where: {
+        AND: [
+          { projectId: input.projectId },
+          { InvitationStatus: InvitationStatus.Accepted },
+        ],
+      },
+      include: {
+        User: true,
+      },
+    });
+    return res;
+  }
+  async removeMember(ctx: authContext, input: { memberId: string }) {
+    const check = await ctx.prisma.member.findUnique({
+      where: {
+        id: input.memberId,
+      },
+    });
+    if (!check || check.owner)
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+      });
+    const res = await ctx.prisma.member.delete({
+      where: {
+        id: input.memberId,
+      },
+    });
+
+    return {
+      message: res ? 'Success' : 'Error',
+    };
+  }
+  async isOwner(ctx: authContext, input: { projectId: string }) {
+    const res = await ctx.prisma.member.findMany({
+      where: {
+        AND: [
+          { projectId: input.projectId },
+          { userId: ctx.user.id },
+          { owner: true },
+        ],
+      },
+    });
+    return res.length > 0;
+  }
 }
