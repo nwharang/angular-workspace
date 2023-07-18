@@ -8,6 +8,30 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-main',
   template: `
+    <div
+      *ngIf="!signIn"
+      class="position-absolute vh-100 vw-100 fixed bg-white d-flex flex-column justify-content-center align-items-center"
+      style="z-index: 9999;"
+    >
+      <div *ngIf="loading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>{{ 'Loading...' | translate }}</p>
+      </div>
+      <div *ngIf="!loading" class="d-flex flex-column">
+        <h3>
+          {{ 'LoginMessage' | translate }}
+        </h3>
+        <button class="btn btn-outline-primary" (click)="showLogin = !showLogin">
+          {{ showLogin ? 'Login' : 'Register' }}
+        </button>
+        <div class="d-flex gap-3 mt-3">
+          <app-login *ngIf="!signIn && showLogin" />
+          <app-register *ngIf="!signIn && !showLogin" />
+        </div>
+      </div>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <button
@@ -48,16 +72,11 @@ import { Router } from '@angular/router';
             </button>
           </span>
           <div>
-            <ng-container *ngIf="signIn; else elseTemplate">
+            <ng-container *ngIf="signIn">
               <button type="button" class="btn btn-primary" (click)="logout()">
                 {{ 'SignOut' | translate }}
               </button>
             </ng-container>
-            <ng-template #elseTemplate>
-              <button type="button" class="btn btn-primary" (click)="login()">
-                {{ 'SignIn' | translate }}
-              </button>
-            </ng-template>
           </div>
           <label>
             <button
@@ -75,7 +94,9 @@ import { Router } from '@angular/router';
   styles: ['.comingsoon {font-family : "Coming Soon"}'],
 })
 export class MainComponent implements OnInit {
+  loading = true;
   signIn = false;
+  showLogin = false;
   constructor(
     public translate: TranslateService,
     public authService: AuthService,
@@ -83,6 +104,9 @@ export class MainComponent implements OnInit {
   ) {
     this.authService.isAuth.then((res) => {
       this.signIn = res;
+      setTimeout(() => {
+        this.loading = false;
+      }, 2000);
     });
   }
   ngOnInit(): void {
@@ -111,9 +135,6 @@ export class MainComponent implements OnInit {
     await trpc.auth.logout.mutate().then(() => {
       location.reload();
     });
-  }
-  async login() {
-    await this.router.navigate(['/auth/login']);
   }
 
   async search(param: string) {

@@ -22,45 +22,67 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
     `,
   ],
   template: ` <div
-    class="container row mx-auto shadow"
-    style="min-height: calc(100vh - 65px);"
+    class="container row mx-auto h-100"
+    style="min-height: calc(100vh - 66px);"
   >
-    <div class="col-8 pt-3">
-      <h3>{{ 'Project' | translate }}</h3>
-      <div *ngIf="projectList.length == 0">
-        {{ 'MessageProjectHomePage' | translate }}
-      </div>
-      <div *ngFor="let item of projectList">
-        <div
-          class="card text-start cardItem"
-          [routerLink]="['/project', item.id]"
-        >
-          <div class="card-body">
-            <h4 class="card-title">{{ item.name }}</h4>
-            <p class="card-text">{{ item.description }}</p>
+    <div class="col-8 py-3">
+      <div class="p-3 shadow rounded-3">
+        <div class="d-flex justify-content-between">
+          <h3>{{ 'Project' | translate }}</h3>
+          <button class="btn btn-primary">{{ 'Create Project' }}</button>
+        </div>
+        <div *ngIf="projectList.length == 0">
+          {{ 'MessageProjectHomePage' | translate }}
+        </div>
+        <div class="row">
+          <div *ngFor="let item of projectList" class="col-6">
+            <div
+              class="card text-start cardItem"
+              [routerLink]="['/project', item.id]"
+            >
+              <div class="card-body">
+                <h4 class="card-title">{{ item.name }}</h4>
+                <p class="card-text">{{ item.description }}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-4 border-start pt-3">
-      <h3>{{ 'Invitation' | translate }}</h3>
-      <div *ngIf="memberList.length == 0">
-        {{ 'MessageMemberHomePage' | translate }}
-      </div>
-      <div class="d-flex " *ngFor="let item of memberList">
-        Lời mời vào nhóm: {{ item.Project?.name }}
-        <button
-          class="btn btn-outline-success"
-          (click)="handlerInvitaion(item.projectId!, 'Accepted')"
-        >
-          {{ 'Accept' | translate }}
-        </button>
-        <button
-          class="btn btn-outline-danger"
-          (click)="handlerInvitaion(item.projectId!, 'Rejected')"
-        >
-          {{ 'Reject' | translate }}
-        </button>
+    <div class="col-4 py-3">
+      <div class="p-3 shadow rounded-3 row ">
+        <h3>{{ 'Invitation' | translate }}</h3>
+        <p>{{ 'InvitationDescription' | translate }}</p>
+        <div *ngIf="memberList.length == 0">
+          {{ 'MessageMemberHomePage' | translate }}
+        </div>
+        <div *ngFor="let item of memberList">
+          <div
+            class="card text-start cardItem"
+            [routerLink]="['/project', item.id]"
+          >
+            <div class="card-body row">
+              <div class="col-8">
+                <h4 class="card-title">{{ item.Project?.name }}</h4>
+                <p class="card-text">{{ item.Project?.description }}</p>
+              </div>
+              <div class="col-4" style="max-width: 120px;">
+                <button
+                  class="btn btn-success mb-3 w-100"
+                  (click)="handlerInvitaion(item.projectId!, 'Accepted')"
+                >
+                  {{ 'Accept' | translate }}
+                </button>
+                <button
+                  class="btn btn-danger w-100"
+                  (click)="handlerInvitaion(item.projectId!, 'Rejected')"
+                >
+                  {{ 'Reject' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>`,
