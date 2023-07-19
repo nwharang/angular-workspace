@@ -5,7 +5,7 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { MemberWithUser } from '../index.component';
+import { MemberWithUser } from '~app/src/app/services/member.service';
 import { trpc } from '~app/src/trpcClient';
 
 @Component({
@@ -20,9 +20,17 @@ import { trpc } from '~app/src/trpcClient';
         margin-bottom: 10px;
         &:hover {
           background-color: #f0f0f0;
+          .addMember {
+            opacity: 1;
+            transition: opacity 0.3s;
+          }
         }
         &:active {
           background-color: #cfe2ff;
+        }
+        .addMember {
+          opacity: 0;
+          transition: opacity 0.3s;
         }
       }
     `,
@@ -70,7 +78,7 @@ import { trpc } from '~app/src/trpcClient';
         *ngFor="let item of memberList; let i = index"
         class="member position-relative"
       >
-        <div class="position-absolute top-0 end-0 me-3 mt-3">
+        <div class="position-absolute top-0 end-0 me-3 mt-3 addMember">
           <button
             *ngIf="!item.owner"
             class="btn btn-danger"
@@ -89,7 +97,9 @@ import { trpc } from '~app/src/trpcClient';
             />
             <div>
               <h5 class="mb-0">{{ item.User!.name }}</h5>
-              <p class="mb-0">{{ item.User!.email }}</p>
+              <p class="mb-0 fst-italic " style="font-size: 0.8rem">
+                {{ item.User!.email }}
+              </p>
             </div>
           </div>
         </div>
@@ -106,7 +116,8 @@ export class MemberComponent {
   showAddMember = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
-  constructor() {}
+  constructor() {
+  }
 
   async addMember(target: HTMLInputElement) {
     await trpc.project.addMember

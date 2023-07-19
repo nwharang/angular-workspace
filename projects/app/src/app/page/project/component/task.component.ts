@@ -1,11 +1,24 @@
 import { Component, HostBinding, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Task } from '@prisma/client';
+import { Status, Task } from '@prisma/client';
 import { trpc } from '~app/src/trpcClient';
-import { MemberWithUser } from '../index.component';
-
+import {
+  MemberService,
+  MemberWithUser,
+} from '~app/src/app/services/member.service';
 @Component({
   selector: 'app-task',
+  styles: [
+    `
+      .card {
+        cursor: pointer;
+        &:hover {
+          background-color: #f0f0f0;
+        }
+      }
+    `,
+  ],
+
   template: `
     <div class=" shadow rounded-3 h-100 d-flex flex-column p-3">
       <div class="d-flex justify-content-between">
@@ -20,94 +33,54 @@ import { MemberWithUser } from '../index.component';
       </div>
       <div class="row flex-grow-1">
         <div
-          class="col-4 border-2  border-end overflow-y-auto"
+          class="col-4 border-2  border-end  "
           (dragover)="onDragOver($event)"
           (drop)="drop($event)"
+          *ngFor="let sStatus of taskStatus"
         >
-          <h4>{{ 'Backlog' | translate }}</h4>
+          <h4>{{ sStatus | translate }}</h4>
           <div
-            class="card"
+            class="card mb-2"
             draggable="true"
             (dragstart)="onDrag(null)"
             (dragend)="onDrag(null)"
             data-bs-toggle="modal"
             data-bs-target="#modalTask"
+            (click)="TaskDetail = item"
+            *ngFor="let item of filterTask(sStatus)"
           >
             <div class="card-body mb-3">
-              <h4>Task name</h4>
+              <h4>{{ item.name }}</h4>
               <p class="mb-0 fw-light ps-6">
-                <span class="badge bg-secondary">Date :</span> 2021-08-19
+                <span class="badge bg-secondary">Date :</span
+                >{{ item.effDate | date : 'dd/MM/yyyy' }}
                 <i class="fa-solid fa-arrow-right" style="color: #0a0a0a;"></i>
-                2021-09-29
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="col-4 border-2 border-end"
-          #doing
-          (dragover)="onDragOver($event)"
-          (drop)="drop($event, doing)"
-        >
-          <h4>Doing</h4>
-          <div
-            class="card"
-            draggable="true"
-            data-bs-toggle="modal"
-            data-bs-target="#modalTask"
-          >
-            <div class="card-body mb-3">
-              <h4>Task name</h4>
-              <p class="mb-0 fw-light ps-6">
-                <span class="badge bg-secondary">Date :</span> 2021-08-19
-                <i class="fa-solid fa-arrow-right" style="color: #0a0a0a;"></i>
-                2021-09-29
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="col-4"
-          (dragover)="onDragOver($event)"
-          (drop)="drop($event)"
-        >
-          <h4>Done</h4>
-          <div
-            class="card"
-            draggable="true"
-            data-bs-toggle="modal"
-            data-bs-target="#modalTask"
-          >
-            <div class="card-body mb-3">
-              <h4>Task name</h4>
-              <p class="mb-0 fw-light ps-6">
-                <span class="badge bg-secondary">Date :</span> 2021-08-19
-                <i class="fa-solid fa-arrow-right" style="color: #0a0a0a;"></i>
-                2021-09-29
+                {{ item.endDate | date : 'dd/MM/yyyy' }}
               </p>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <app-newtask (newTask)="handlerCreateTask($event)" />
+    <app-newtask (changeTaskList)="handlerTask()" />
     <app-detailTask
-      (deteleTask)="handlerDeleteTask($event)"
-      (updateTask)="handlerUpdateTask($event)"
+      [TaskDetail]="TaskDetail"
+      (changeTaskList)="handlerTask()"
     />
   `,
 })
 export class TaskComponent {
   @HostBinding('class') class = 'col-9 p-3';
   @Input() memberList: MemberWithUser[] = [];
-
+  TaskDetail: Task | null = null;
   drag: Task | null = null;
   taskList: Task[] = [];
   projectId;
-
-  constructor(private router: ActivatedRoute) {
+  taskStatus: string[] = Object.keys(Status);
+  constructor(
+    private router: ActivatedRoute,
+    private memberService: MemberService
+  ) {
     this.projectId = this.router.snapshot.paramMap.get('id') as string;
     trpc.task.getTaskByProjectId
       .query({ projectId: this.projectId })
@@ -126,14 +99,22 @@ export class TaskComponent {
   onDrag(task: Task | null) {
     this.drag = task;
   }
-
+  filterTask(status: string) {
+    return this.taskList.filter((e) => e.status == (status as Status));
+  }
   handlerCreateTask(e: Event) {
     console.log(e);
   }
   handlerUpdateTask(e: Event) {
     console.log(e);
   }
-  handlerDeleteTask(e: Event) {
-    console.log(e);
+  handlerTask() {
+    trpc.task.getTaskByProjectId
+      .query({ projectId: this.projectId })
+      .then((res) => {
+        this.taskList = res as unknown as Task[];
+      });
   }
+  error = null;
+  message = null;
 }

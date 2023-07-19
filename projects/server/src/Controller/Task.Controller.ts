@@ -8,9 +8,7 @@ export class TaskController {
         projectId: input.projectId,
       },
     });
-    return {
-      data: res,
-    };
+    return res;
   }
   async createTask(
     ctx: authContext,
@@ -35,7 +33,10 @@ export class TaskController {
       include: {
         Member: true,
       },
-    });
+    })
+      .catch(() => {
+        throw new TRPCError({ code: 'BAD_REQUEST' });
+      });
     return res;
   }
   async updateTask(

@@ -1,13 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Prisma } from '@prisma/client';
 import { trpc } from '~app/src/trpcClient';
+import { MemberService, MemberWithUser } from '../../services/member.service';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const MemberWithUser = Prisma.validator<Prisma.MemberArgs>()({
-  include: { User: true },
-});
-export type MemberWithUser = Prisma.MemberGetPayload<typeof MemberWithUser>;
 
 @Component({
   selector: 'app-project',
@@ -38,17 +34,15 @@ export class ProjectComponent {
   isOwner: boolean = false;
   projectId: string;
 
-  constructor(private router: ActivatedRoute) {
+  constructor(
+    private router: ActivatedRoute,
+    private memberService: MemberService
+  ) {
     this.projectId = this.router.snapshot.paramMap.get('id') as string;
 
-    trpc.project.getMember
-      .query({
-        projectId: this.projectId,
-      })
-      .then((res) => {
-        this.memberList = res as unknown as MemberWithUser[];
-      });
-
+    this.memberService
+      .load(this.projectId)
+      .then((data) => (this.memberList = data));
     trpc.project.isOwner.query({ projectId: this.projectId }).then((res) => {
       this.isOwner = res as boolean;
     });
@@ -63,6 +57,7 @@ export class ProjectComponent {
         this.memberList = res as unknown as MemberWithUser[];
       });
   }
+  
 
   //selectedMember
 }

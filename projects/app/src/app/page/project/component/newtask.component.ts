@@ -1,6 +1,17 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Status } from '@prisma/client';
+import { trpc } from '~app/src/trpcClient';
+import {
+  MemberService,
+  MemberWithUser,
+} from '~app/src/app/services/member.service';
+
+//bootstrap modal
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, no-var
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-newtask',
   styles: [``],
@@ -13,11 +24,7 @@ import { Status } from '@prisma/client';
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
-      <form
-        #frm="ngForm"
-        (ngSubmit)="createNewTask($event, frm)"
-        class="modal-dialog"
-      >
+      <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="exampleModalLabel">New Task</h1>
@@ -29,7 +36,7 @@ import { Status } from '@prisma/client';
             ></button>
           </div>
           <div class="modal-body">
-            <div>
+            <form #frm="ngForm" (ngSubmit)="createNewTask($event, frm)">
               <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
                 <input
@@ -50,16 +57,21 @@ import { Status } from '@prisma/client';
                   [(ngModel)]="data.description"
                 ></textarea>
               </div>
+
               <div class="mb-3">
-                <label for="effDate" class="form-label">Effort Date</label>
-                <input
-                  type="date"
+                <label for="name" class="form-label">Member</label>
+                <select
                   class="form-control"
-                  name="effDate"
+                  name="memberId"
                   placeholder="Task name"
-                  [(ngModel)]="data.effDate"
-                />
+                  [(ngModel)]="data.memberId"
+                >
+                  <option *ngFor="let item of memberList" [value]="item.id">
+                    {{ item.User!.name }}
+                  </option>
+                </select>
               </div>
+
               <div class="mb-3">
                 <label for="endDate" class="form-label">End Date</label>
                 <input
@@ -70,9 +82,31 @@ import { Status } from '@prisma/client';
                   [(ngModel)]="data.endDate"
                 />
               </div>
-            </div>
+              <div class="mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select
+                  class="form-select"
+                  name="status"
+                  [(ngModel)]="data.status"
+                >
+                  <option value="Backlog" [defaultSelected]="data.status">
+                    Backlog
+                  </option>
+                  <option value="InProgress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
+              <div *ngIf="error" class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">{{ error }}</h4>
+              </div>
+              <div *ngIf="message" class="alert alert-success" role="alert">
+                <h4 class="alert-heading">{{ message }}</h4>
+              </div>
+              <button type="submit" class="btn btn-primary">Create</button>
+            </form>
           </div>
           <div class="modal-footer">
+            <button (click)="closeModal()">adasd</button>
             <button
               type="button"
               class="btn btn-secondary"
@@ -80,38 +114,75 @@ import { Status } from '@prisma/client';
             >
               Close
             </button>
-            <button type="submit" class="btn btn-primary">Save</button>
           </div>
         </div>
-      </form>
+      </div>
     </div>
   `,
 })
 export class NewTaskComponent {
-  @Output() newTask = new EventEmitter();
+  error: [string, string] | null = null;
+  message: [string] | null = null;
+  projectid: string;
+  @Output() changeTaskList = new EventEmitter();
   data: {
+    memberId: string;
     name: string;
-    description: string | null;
+    description: string;
     status: Status;
     effDate: Date;
     endDate: Date;
   } = {
+    memberId: '',
     name: '',
-    description: null,
+    description: '',
     status: Status.Backlog,
     effDate: new Date(),
     endDate: new Date(),
   };
-  // <{
-  //   name: string;
-  //   description: string | null;
-  //   status: Status;
-  //   effDate: Date;
-  //   endDate: Date;
-  // }>
-  createNewTask(e: Event, frm: NgForm) {
-    e.preventDefault();
+  memberList: MemberWithUser[] = [];
+  constructor(roure: ActivatedRoute, private memberService: MemberService) {
+    this.projectid = roure.snapshot.paramMap.get('id')!;
 
-    console.log(frm);
+    this.memberService
+      .load(this.projectid)
+      .then((data) => (this.memberList = data));
+  }
+  async createNewTask(e: Event, frm: NgForm) {
+    e.preventDefault();
+    if (frm.valid) {
+      await trpc.task.createTask
+        .mutate({
+          name: this.data.name,
+          description: this.data.description,
+          status: this.data.status,
+          endDate: new Date(this.data.endDate),
+          memberId: this.data.memberId,
+          projectId: this.projectid,
+        })
+        .then(() => {
+          this.message = [`Create task ${this.data.name} success`];
+          this.error = null;
+          this.changeTaskList.emit();
+          setTimeout(this.closeModal, 1000);
+        })
+        .catch((err) => {
+          this.error = err;
+          this.message = null;
+        });
+    }
+    frm.reset();
+  }
+
+  closeModal(id: string = 'modalNewTask') {
+    const eleModal = document.getElementById(id);
+    if (eleModal) {
+      let myModal = bootstrap.Modal.getInstance(eleModal);
+      if (!myModal) {
+        myModal = new bootstrap.Modal(eleModal, {});
+      }
+
+      myModal.hide();
+    }
   }
 }
