@@ -53,6 +53,10 @@ export default class ProjectController {
       where: {
         id: input.id,
       },
+      include: {
+        member: true,
+        task: true,
+      },
     });
     return {
       message: res ? 'Success' : 'Error',
@@ -75,7 +79,6 @@ export default class ProjectController {
         User: true,
       },
     });
-    console.log(isOwner.find((e) => e.owner)?.id);
 
     if (isOwner.find((e) => e.owner)?.userId !== ctx.user.id)
       throw new TRPCError({

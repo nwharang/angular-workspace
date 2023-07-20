@@ -213,10 +213,18 @@ declare var bootstrap: any;
                     ></i>
                     {{ updateStatus(TaskDetail?.status) }}
                   </button>
-                  <div *ngIf="error" class="alert alert-danger" role="alert">
+                  <div
+                    *ngIf="error && showMessage"
+                    class="alert alert-danger"
+                    role="alert"
+                  >
                     <h5 class="alert-heading">{{ error }}</h5>
                   </div>
-                  <div *ngIf="message" class="alert alert-success" role="alert">
+                  <div
+                    *ngIf="message && showMessage"
+                    class="alert alert-success"
+                    role="alert"
+                  >
                     <h5 class="alert-heading">{{ message }}</h5>
                   </div>
 
@@ -267,6 +275,7 @@ export class DetailTaskComponent {
   projectId: string;
   updateInput: boolean = true;
   move: string = 'Move';
+  showMessage: boolean = false;
   @Output() changeTaskList = new EventEmitter();
   data: {
     id: string;
@@ -340,6 +349,10 @@ export class DetailTaskComponent {
         this.error = null;
         this.message = ['Update Success'];
         this.changeTaskList.emit(this.message);
+        this.showMessage = true;
+        setTimeout(() => {
+          this.showMessage = false;
+        }, 3000);
       })
       .catch((err) => {
         this.error = err;
@@ -390,11 +403,11 @@ export class DetailTaskComponent {
   updateStatus(status: unknown) {
     switch (status) {
       case Status.Backlog:
-        return this.move = 'InProgress';
+        return (this.move = 'InProgress');
       case Status.InProgress:
-        return this.move = 'Completed';
+        return (this.move = 'Completed');
       case Status.Completed:
-        return this.move = 'Done';
+        return (this.move = 'Done');
     }
     return this.move;
   }

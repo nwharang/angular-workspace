@@ -33,17 +33,17 @@ import {
       </div>
       <div class="row flex-grow-1">
         <div
+          *ngFor="let sStatus of taskStatus"
           class="col-4 border-2  border-end  "
           (dragover)="onDragOver($event)"
-          (drop)="drop($event)"
-          *ngFor="let sStatus of taskStatus"
+          (drop)="drop($event, sStatus)"
         >
           <h4>{{ sStatus | translate }}</h4>
           <div
             class="card mb-2"
             draggable="true"
-            (dragstart)="onDrag(null)"
-            (dragend)="onDrag(null)"
+            (dragstart)="onDrag(item)"
+            (dragend)="onDrag(item)"
             data-bs-toggle="modal"
             data-bs-target="#modalTask"
             (click)="TaskDetail = item"
@@ -82,15 +82,18 @@ export class TaskComponent {
     private memberService: MemberService
   ) {
     this.projectId = this.router.snapshot.paramMap.get('id') as string;
-    trpc.task.getTaskByProjectId
-      .query({ projectId: this.projectId })
-      .then((res) => {
-        this.taskList = res as unknown as Task[];
-      });
+    this.handlerTask();
   }
-  drop(e: Event, target?: HTMLElement) {
+  async drop(e: Event, target: string) {
     e.preventDefault();
-    console.log(target);
+    if (this.drag) {
+      await trpc.task.updateTask.mutate({
+        ...this.drag,
+        description: this.drag.description!,
+        status: target as Status,
+      });
+    }
+    await this.handlerTask();
   }
   onDragOver(event: Event) {
     event.preventDefault();

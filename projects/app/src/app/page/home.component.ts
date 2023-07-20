@@ -43,23 +43,21 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
             {{ 'MessageProjectHomePage' | translate }}
           </div>
           <div class="row">
-            <div *ngFor="let item of projectList" class="col-6">
+            <div
+              *ngFor="let item of projectList"
+              class="col-6 position-relative"
+            >
+              <button
+                class="btn btn-danger position-absolute top-50 translate-middle "
+                style="z-index: 500; right: 1rem;"
+                (click)="deleteProject(item)"
+              >
+                <i class="fa-solid fa-trash-can" style="color: #ffffff;"></i>
+              </button>
               <div
                 class="card text-start cardItem "
                 [routerLink]="['/project', item.id]"
               >
-                <div class="position-relative">
-                  <div
-                    class="position-absolute top-0 end-0 me-3 mt-3 addMember"
-                  >
-                    <button class="btn btn-danger">
-                      <i
-                        class="fa-solid fa-trash-can"
-                        style="color: #ffffff;"
-                      ></i>
-                    </button>
-                  </div>
-                </div>
                 <div class="card-body">
                   <h4 class="card-title">{{ item.name }}</h4>
                   <p class="card-text">{{ item.description }}</p>
@@ -83,8 +81,8 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
             >
               <div class="card-body row">
                 <div class="col-8">
-                  <h4 class="card-title">{{ item.Project?.name }}</h4>
-                  <p class="card-text">{{ item.Project?.description }}</p>
+                  <h4 class="card-title">{{ item.Project.name }}</h4>
+                  <p class="card-text">{{ item.Project.description }}</p>
                 </div>
                 <div class="col-4" style="max-width: 120px;">
                   <button
@@ -107,7 +105,9 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
       </div>
     </div>
     <!-- Modal project -->
-    <div
+    <form
+      #frm="ngForm"
+      (ngSubmit)="createNewProject($event)"
       class="modal fade"
       id="modalNewProject"
       tabindex="-1"
@@ -126,12 +126,13 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
             ></button>
           </div>
           <div class="modal-body">
-            <form #frm="ngForm" (ngSubmit)="createNewProject($event, frm)">
+            <div>
               <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
                 <input
                   type="text"
                   class="form-control"
+                  required
                   name="name"
                   placeholder="Task name"
                   [(ngModel)]="data.name"
@@ -143,6 +144,7 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
                   class="form-control"
                   name="description"
                   rows="3"
+                  required
                   placeholder="Task description"
                   [(ngModel)]="data.description"
                 ></textarea>
@@ -154,11 +156,10 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
               <div *ngIf="message" class="alert alert-success" role="alert">
                 <h4 class="alert-heading">{{ message }}</h4>
               </div>
-              <button type="submit" class="btn btn-primary">Create</button>
-            </form>
+            </div>
           </div>
           <div class="modal-footer">
-            <button (click)="closeModal()">adasd</button>
+            <button type="submit" class="btn btn-primary">Create</button>
             <button
               type="button"
               class="btn btn-secondary"
@@ -169,7 +170,7 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
           </div>
         </div>
       </div>
-    </div>
+    </form>
   `,
 })
 export class HomeComponent implements OnInit {
@@ -209,19 +210,19 @@ export class HomeComponent implements OnInit {
     this.memberList = res;
     this.loadProject();
   }
-  async createNewProject(
-    event: Event,
-    frm: { value: { name: string; description: string } }
-  ): Promise<void> {
+  async createNewProject(event: Event): Promise<void> {
     event.preventDefault();
-    const res = (await trpc.project.create.mutate(frm.value)) as unknown as {
-      data: Project;
-    };
-
-    this.projectList.push(res.data);
+    const res = await trpc.project.create.mutate({
+      name: this.data.name,
+      description: this.data.description,
+    });
+    if (res) this.loadProject();
     this.closeModal();
   }
-
+  async deleteProject(item: Project): Promise<void> {
+    const res = await trpc.project.delete.mutate({ id: item.id });
+    if (res) this.loadProject();
+  }
   closeModal(): void {
     const eleModal = document.getElementById('modalNewProject');
     if (eleModal) {
