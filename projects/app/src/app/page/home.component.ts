@@ -3,7 +3,8 @@ import { InvitationStatus, Prisma, Project } from '@prisma/client';
 import { trpc } from '~app/src/trpcClient';
 import { AuthService } from '../services/auth.service';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, no-var
+declare var bootstrap: any;
 const MemberWithProject = Prisma.validator<Prisma.MemberArgs>()({
   include: { Project: true },
 });
@@ -28,9 +29,15 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
     >
       <div class="col-8 py-3">
         <div class="p-3 shadow rounded-3">
-          <div class="d-flex justify-content-between pb-3">
+          <div class="d-flex justify-content-between">
             <h3>{{ 'Project' | translate }}</h3>
-            <button class="btn btn-primary">{{ 'Create Project' }}</button>
+            <button
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#modalNewProject"
+            >
+              >{{ 'Create Project' }}
+            </button>
           </div>
           <div *ngIf="projectList.length == 0">
             {{ 'MessageProjectHomePage' | translate }}
@@ -38,9 +45,21 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
           <div class="row">
             <div *ngFor="let item of projectList" class="col-6">
               <div
-                class="card text-start cardItem"
+                class="card text-start cardItem "
                 [routerLink]="['/project', item.id]"
               >
+                <div class="position-relative">
+                  <div
+                    class="position-absolute top-0 end-0 me-3 mt-3 addMember"
+                  >
+                    <button class="btn btn-danger">
+                      <i
+                        class="fa-solid fa-trash-can"
+                        style="color: #ffffff;"
+                      ></i>
+                    </button>
+                  </div>
+                </div>
                 <div class="card-body">
                   <h4 class="card-title">{{ item.name }}</h4>
                   <p class="card-text">{{ item.description }}</p>
@@ -87,6 +106,70 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
         </div>
       </div>
     </div>
+    <!-- Modal project -->
+    <div
+      class="modal fade"
+      id="modalNewProject"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">New Task</h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form #frm="ngForm" (ngSubmit)="createNewProject($event, frm)">
+              <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="name"
+                  placeholder="Task name"
+                  [(ngModel)]="data.name"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                  class="form-control"
+                  name="description"
+                  rows="3"
+                  placeholder="Task description"
+                  [(ngModel)]="data.description"
+                ></textarea>
+              </div>
+
+              <div *ngIf="error" class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">{{ error }}</h4>
+              </div>
+              <div *ngIf="message" class="alert alert-success" role="alert">
+                <h4 class="alert-heading">{{ message }}</h4>
+              </div>
+              <button type="submit" class="btn btn-primary">Create</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button (click)="closeModal()">adasd</button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   `,
 })
 export class HomeComponent implements OnInit {
@@ -94,6 +177,12 @@ export class HomeComponent implements OnInit {
   projectList: Project[] = [];
   showCreateProject = false;
   error: string | null = null;
+  message: string | null = null;
+  data: { name: string; description: string } = {
+    name: '',
+    description: '',
+  };
+
   constructor(private authService: AuthService) {}
 
   async ngOnInit(): Promise<void> {
@@ -119,5 +208,35 @@ export class HomeComponent implements OnInit {
     })) as unknown as MemberWithProject[];
     this.memberList = res;
     this.loadProject();
+  }
+  async createNewProject(
+    event: Event,
+    frm: { value: { name: string; description: string } }
+  ): Promise<void> {
+    event.preventDefault();
+    const res = (await trpc.project.create.mutate(frm.value)) as unknown as {
+      data: Project;
+    };
+
+    this.projectList.push(res.data);
+    this.closeModal();
+  }
+
+  closeModal(): void {
+    const eleModal = document.getElementById('modalNewProject');
+    if (eleModal) {
+      let myModal = bootstrap.Modal.getInstance(eleModal);
+      if (!myModal) {
+        myModal = new bootstrap.Modal(eleModal, {});
+      }
+
+      myModal.hide();
+    }
+    this.data = {
+      name: '',
+      description: '',
+    };
+    this.error = null;
+    this.message = null;
   }
 }
