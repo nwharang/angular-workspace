@@ -13,9 +13,7 @@ export default class MemberController {
         Project: true,
       },
     });
-    return {
-      data: memberList,
-    };
+    return memberList;
   }
 
   async invitation(

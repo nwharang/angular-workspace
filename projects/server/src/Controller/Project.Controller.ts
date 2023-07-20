@@ -1,5 +1,5 @@
 // import { TRPCError } from '@trpc/server';
-import { Project, InvitationStatus, Member } from '@prisma/client';
+import { InvitationStatus, Member } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { authContext } from '~server/Middleware/Auth.Middleware';
 
@@ -16,13 +16,11 @@ export default class ProjectController {
       return {
         data: projectList,
       };
-    return {
-      data: (await ctx.prisma.project.findMany({
-        where: {
-          id: { in: projectList as string[] },
-        },
-      })) as unknown as Project[],
-    };
+    return ctx.prisma.project.findMany({
+      where: {
+        id: { in: projectList as string[] },
+      },
+    });
   }
   async createProject(
     ctx: authContext,
