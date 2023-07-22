@@ -57,6 +57,7 @@
             ],
             "styles": [
               "projects/app/src/styles.scss",
+              "node_modules/normalize.css/normalize.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
             ],
@@ -105,8 +106,8 @@
           "builder": "@angular-devkit/build-angular:server",
           "options": {
             "outputPath": "dist/server/server",
-            "main": "projects/server/server.ts",
-            "tsConfig": "projects/server/tsconfig.server.json",
+            "main": "projects/server/appserver.ts",
+            "tsConfig": "projects/server/tsconfig.appserver.json",
             "inlineStyleLanguage": "scss"
           },
           "configurations": {
@@ -133,6 +134,127 @@
             "production": {
               "browserTarget": "app:build:production",
               "serverTarget": "app:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
+    },
+    "ecom": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/ecom",
+      "sourceRoot": "projects/ecom/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "allowedCommonJsDependencies": [
+              "bootstrap",
+              "jquery",
+              "popper.js",
+              "@prisma/client"
+            ],
+            "outputPath": "dist/ecom/browser",
+            "index": "projects/ecom/src/index.html",
+            "main": "projects/ecom/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "projects/ecom/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/ecom/src/favicon.ico",
+              "projects/ecom/src/assets"
+            ],
+            "styles": [
+              "projects/ecom/src/styles.scss",
+              "node_modules/normalize.css/normalize.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+            ],
+            "scripts": ["node_modules/bootstrap/dist/js/bootstrap.min.js"]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "ecom:build:production"
+            },
+            "development": {
+              "browserTarget": "ecom:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ecom:build"
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/server/server",
+            "main": "projects/server/ecomserver.ts",
+            "tsConfig": "projects/server/tsconfig.ecomserver.json",
+            "inlineStyleLanguage": "scss"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "vendorChunk": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "ecom:build:development",
+              "serverTarget": "ecom:server:development"
+            },
+            "production": {
+              "browserTarget": "ecom:build:production",
+              "serverTarget": "ecom:server:production"
             }
           },
           "defaultConfiguration": "development"
