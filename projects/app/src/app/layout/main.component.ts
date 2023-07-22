@@ -23,12 +23,8 @@ import { Router } from '@angular/router';
         <h3>
           {{ 'LoginMessage' | translate }}
         </h3>
-        <button class="btn btn-outline-primary" (click)="showLogin = !showLogin">
-          {{ showLogin ? 'Login' : 'Register' }}
-        </button>
         <div class="d-flex gap-3 mt-3">
-          <app-login *ngIf="!signIn && showLogin" />
-          <app-register *ngIf="!signIn && !showLogin" />
+          <lib-auth />
         </div>
       </div>
     </div>

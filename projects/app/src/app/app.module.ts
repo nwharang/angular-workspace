@@ -16,6 +16,7 @@ import { DetailTaskComponent } from './page/project/component/detailTask.compone
 import { NewTaskComponent } from './page/project/component/newtask.component';
 import { MemberComponent } from './page/project/component/member.component';
 import { TaskComponent } from './page/project/component/task.component';
+import { AuthModule } from 'auth';
 
 export function HttpLoaderFactory() {
   class TranslationProviderService implements TranslateLoader {
@@ -48,6 +49,7 @@ export function HttpLoaderFactory() {
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    AuthModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {
