@@ -57,7 +57,6 @@ export class ProjectComponent {
         this.memberList = res as unknown as MemberWithUser[];
       });
   }
-  
 
   //selectedMember
 }

@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "rootDir": "./",
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
@@ -21,9 +22,11 @@
     "allowSyntheticDefaultImports": true,
     "lib": ["ES2022", "dom"],
     "paths": {
+      "auth": ["dist/auth"],
       "~app/*": ["projects/app/*"],
       "~ecom/*": ["projects/ecom/*"],
-      "~server/*": ["projects/server/src/*"]
+      "~server/*": ["projects/server/src/*"],
+      "~auth/*": ["projects/auth/*"]
     }
   },
   "exclude": [

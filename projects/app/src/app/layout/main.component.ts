@@ -20,11 +20,8 @@ import { Router } from '@angular/router';
         <p>{{ 'Loading...' | translate }}</p>
       </div>
       <div *ngIf="!loading" class="d-flex flex-column">
-        <h3>
-          {{ 'LoginMessage' | translate }}
-        </h3>
         <div class="d-flex gap-3 mt-3">
-          <lib-auth />
+          <lib-auth (dataInput)="logData($event)" />
         </div>
       </div>
     </div>
@@ -92,7 +89,7 @@ import { Router } from '@angular/router';
 export class MainComponent implements OnInit {
   loading = true;
   signIn = false;
-  showLogin = false;
+  data = 'Hello';
   constructor(
     public translate: TranslateService,
     public authService: AuthService,
@@ -135,5 +132,9 @@ export class MainComponent implements OnInit {
 
   async search(param: string) {
     console.log(param);
+  }
+
+  logData(event: { email: string; password: string }) {
+    console.log(event);
   }
 }
