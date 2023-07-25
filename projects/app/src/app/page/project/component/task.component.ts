@@ -6,6 +6,10 @@ import {
   MemberService,
   MemberWithUser,
 } from '~app/src/app/services/member.service';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const bootstrap: any;
+
 @Component({
   selector: 'app-task',
   styles: [
@@ -22,13 +26,13 @@ import {
   template: `
     <div class=" shadow rounded-3 h-100 d-flex flex-column p-3">
       <div class="d-flex justify-content-between">
-        <h2>Task</h2>
+        <h2>{{ 'Tasks' | translate }}</h2>
         <button
           class="btn btn-primary me-3"
-          data-bs-toggle="modal"
-          data-bs-target="#modalNewTask"
+          (click)="openModal('modalNewTask')"
         >
-          <i class="fa-solid fa-plus" style="color: #ffffff;"></i> New task
+          <i class="fa-solid fa-plus" style="color: #ffffff;"></i>
+          {{ 'AddTask' | translate }}
         </button>
       </div>
       <div class="row flex-grow-1">
@@ -44,15 +48,14 @@ import {
             draggable="true"
             (dragstart)="onDrag(item)"
             (dragend)="onDrag(item)"
-            data-bs-toggle="modal"
-            data-bs-target="#modalTask"
-            (click)="TaskDetail = item"
+            (click)="openModal('modalTask', item)"
+            #id
             *ngFor="let item of filterTask(sStatus)"
           >
             <div class="card-body mb-3">
               <h4>{{ item.name }}</h4>
-              <p class="mb-0 fw-light ps-6">
-                <span class="badge bg-secondary">Date :</span
+              <p class="mb-0 fw-light fs-6">
+                <span class="badge bg-secondary mt-2">Date :</span
                 >{{ item.effDate | date : 'dd/MM/yyyy' }}
                 <i class="fa-solid fa-arrow-right" style="color: #0a0a0a;"></i>
                 {{ item.endDate | date : 'dd/MM/yyyy' }}
@@ -72,9 +75,10 @@ import {
 export class TaskComponent {
   @HostBinding('class') class = 'col-9 p-3';
   @Input() memberList: MemberWithUser[] = [];
-  TaskDetail: Task | null = null;
+  TaskDetail: Task ={}as Task;
   drag: Task | null = null;
   taskList: Task[] = [];
+  showDetails = false;
   projectId;
   taskStatus: string[] = Object.keys(Status);
   constructor(
@@ -105,12 +109,7 @@ export class TaskComponent {
   filterTask(status: string) {
     return this.taskList.filter((e) => e.status == (status as Status));
   }
-  handlerCreateTask(e: Event) {
-    console.log(e);
-  }
-  handlerUpdateTask(e: Event) {
-    console.log(e);
-  }
+
   handlerTask() {
     trpc.task.getTaskByProjectId
       .query({ projectId: this.projectId })
@@ -118,6 +117,22 @@ export class TaskComponent {
         this.taskList = res as unknown as Task[];
       });
   }
-  error = null;
-  message = null;
+  //function open bootstrap modal
+  openModal(id: string, item: Task | null = null) {
+    if (id == 'modalTask') {
+      this.TaskDetail = item as unknown as Task;
+    }
+    const eleModal = document.getElementById(id);
+    try {
+      let myModal = bootstrap.Modal.getInstance(eleModal);
+      if (!myModal) {
+        myModal = new bootstrap.Modal(eleModal, {});
+      }
+      myModal.show();
+    
+    // eslint-disable-next-line no-empty
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
