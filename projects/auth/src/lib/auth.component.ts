@@ -67,7 +67,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
                   <div class="pt-1 mb-4">
                     <button
                       class="btn btn-dark btn-lg btn-block "
-                      (click)="show()"
+                      (click)="login()"
                       type="button"
                     >
                       Login
@@ -99,6 +99,8 @@ import { Component, EventEmitter, Output } from '@angular/core';
                     >
                     <input
                       type="email"
+                      [(ngModel)]="data.email"
+                      name="email"
                       id="form2Example17"
                       class="form-control form-control-lg"
                     />
@@ -110,13 +112,19 @@ import { Component, EventEmitter, Output } from '@angular/core';
                     >
                     <input
                       type="password"
+                      [(ngModel)]="data.password"
+                      name="password"
                       id="form2Example27"
                       class="form-control form-control-lg"
                     />
                   </div>
 
                   <div class="pt-1 mb-4">
-                    <button class="btn btn-dark btn-lg btn-block" type="button">
+                    <button
+                      class="btn btn-dark btn-lg btn-block"
+                      type="button"
+                      (click)="register()"
+                    >
                       Register
                     </button>
                   </div>
@@ -146,13 +154,20 @@ export class AuthComponent {
     email: string;
     password: string;
   }>();
+  @Output() dataRegister = new EventEmitter<{
+    email: string;
+    password: string;
+  }>();
   showLogin: boolean = true;
   data = {
     email: '',
     password: '',
   };
 
-  show() {
+  login() {
     this.dataInput.emit(this.data);
+  }
+  register() {
+    this.dataRegister.emit(this.data);
   }
 }

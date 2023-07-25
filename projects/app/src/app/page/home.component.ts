@@ -29,14 +29,14 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
     >
       <div class="col-8 py-3">
         <div class="p-3 shadow rounded-3">
-          <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-between py-2">
             <h3>{{ 'Project' | translate }}</h3>
             <button
               class="btn btn-primary"
               data-bs-toggle="modal"
               data-bs-target="#modalNewProject"
             >
-              >{{ 'Create Project' }}
+              {{ 'CreateProject' | translate }}
             </button>
           </div>
           <div *ngIf="projectList.length == 0">
@@ -70,7 +70,7 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
       <div class="col-4 py-3">
         <div class="p-3 shadow rounded-3 row ">
           <h3>{{ 'Invitation' | translate }}</h3>
-          <p>{{ 'InvitationDescription' | translate }}</p>
+          <p>{{ 'InvitationMessage' | translate }}</p>
           <div *ngIf="memberList.length == 0">
             {{ 'MessageMemberHomePage' | translate }}
           </div>
@@ -117,7 +117,9 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">New Task</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              {{ 'CreateProject' | translate }}
+            </h1>
             <button
               type="button"
               class="btn-close"
@@ -128,22 +130,26 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
           <div class="modal-body">
             <div>
               <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
+                <label for="name" class="form-label">
+                  {{ 'NameProject' | translate }}</label
+                >
                 <input
                   type="text"
                   class="form-control"
                   required
                   name="name"
-                  placeholder="Task name"
+                  placeholder="Project name"
                   [(ngModel)]="data.name"
                 />
               </div>
               <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
+                <label for="description" class="form-label">{{
+                  'Description' | translate
+                }}</label>
                 <textarea
                   class="form-control"
                   name="description"
-                  rows="3"
+                  rows="10"
                   required
                   placeholder="Task description"
                   [(ngModel)]="data.description"
@@ -159,13 +165,15 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
             </div>
           </div>
           <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="submit" class="btn btn-primary">
+              {{ 'Create' | translate }}
+            </button>
             <button
               type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal"
             >
-              Close
+              {{ 'Close' | translate }}
             </button>
           </div>
         </div>

@@ -1,0 +1,134 @@
+.container {
+  .category {
+    .price{
+      input{
+        border: #51194e 1px solid;
+        border-radius: 15px;
+        &:focus{
+          outline: none;
+          box-shadow: #51194e 0px 0px 5px;
+        }
+      }
+      button{
+        border: #51194e 1px solid;
+        border-radius: 15px;
+        &:hover{
+          outline: none;
+          box-shadow: #51194e 0px 0px 5px;
+          
+        }
+      }
+    }
+    hr {
+      opacity: 1;
+      color: #841667;
+    }
+    .list-group {
+      height: 100%;
+      li {
+        border-radius: 0.5;
+        &:hover {
+          background-color: #841667;
+          color: white;
+        }
+      }
+    }
+  }
+  .card {
+    a {
+      color: #51194e;
+      text-decoration: none;
+    }
+    border: 1px solid #b43fae;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    &:hover {
+      border: 1px solid #ffc107;
+      box-shadow: #f8ef9f;
+      background-color: #f8fbe4;
+      box-shadow: rgba(0, 0, 0, 0.5) 20px 20px 30px;
+      transform: scale(1.02);
+    }
+    .card-title {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .card-text {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .card-img-top {
+      border-radius: 10px;
+    }
+    .deal {
+      background-color: #51194e;
+      color: #ffffff;
+      display: block;
+      padding: 5px 10px;
+      text-align: center;
+    }
+    button {
+      color: #51194e;
+      background-color: #fddf00;
+      border: 1px solid #fddf00;
+      &:hover {
+        border: 1px solid #51194e;
+        box-shadow: #fddf00;
+        background-color: #ffffff;
+        color: #51194e;
+      }
+    }
+    .details {
+      color: #511919;
+      z-index: 10;
+      &:hover {
+        border-bottom: 2px solid #fddf00;
+        color: #fddf00;
+      }
+    }
+  }
+  nav {
+    .page-item {
+      z-index: 3;
+      .page-link {
+        color: #ffffff;
+        background-color: #51194e;
+        border: 1px solid #fddf00;
+        &:hover {
+          border: 1px solid #fff184;
+          box-shadow: #fddf00;
+          background-color: #51194e;
+          color: #fddf00;
+          border: 2px solid #fddf00;
+        }
+      }
+    }
+    .disabled {
+      .page-link {
+        color: #51194e;
+        background-color: #fff3a1;
+        border: 1px solid #fddf00;
+        &:hover {
+          border: 1px solid #fddf00;
+          box-shadow: #fddf00;
+          background-color: #fddf00;
+          color: #fddf00;
+        }
+      }
+    }
+    .active {
+      .page-link {
+        color: #51194e;
+        background-color: #fddf00;
+        border: 1px solid #fddf00;
+        &:hover {
+          border: 1px solid #fddf00;
+          box-shadow: #fddf00;
+          background-color: #51194e;
+          color: #fddf00;
+        }
+      }
+    }
+  }
+}

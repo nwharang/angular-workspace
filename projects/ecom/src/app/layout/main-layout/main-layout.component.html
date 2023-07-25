@@ -1,0 +1,7 @@
+<app-header></app-header>
+<main>
+    <app-hero *ngIf="url=='/home' || url=='' || url=='/'"></app-hero>
+    <app-hero-nav  [class.d-none]="showHeroNav"></app-hero-nav>
+    <router-outlet></router-outlet>
+</main>
+<app-footer></app-footer>

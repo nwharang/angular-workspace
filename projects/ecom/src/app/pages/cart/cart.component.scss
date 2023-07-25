@@ -1,0 +1,42 @@
+.offcanvas {
+  width: 40% !important;
+  @media screen and (max-width: 768px)  {
+    width: 100% !important;
+  } 
+  @media screen and (min-width: 768px) and (max-width: 1024px)  {
+    width: 60% !important;
+  }
+    
+
+  .table-image {
+    thead {
+      td,
+      th {
+        border: 0;
+        color: #666;
+        font-size: 0.8rem;
+      }
+    }
+
+    td,
+    th {
+      vertical-align: middle;
+      text-align: center;
+
+      .qty {
+        width: 25%;
+        input{
+          width: 20px;
+        }
+      }
+    }
+  }
+
+  .price {
+    margin-left: 1rem;
+  }
+
+  .modal-footer {
+    padding-top: 0rem;
+  }
+}

@@ -1,0 +1,22 @@
+section {
+  background-image: url("/assets/images/slider.webp");
+  height: 50em;
+  background-position: inherit;
+  @media screen and (max-width: 768px) {
+    height: 30em;
+  }
+    @media screen and (max-width: 576px) {
+        height: 25em;
+    }
+
+}
+
+.btn-warning-outline {
+  border-color: #f0ad4e;
+  color: #fff;
+  &:hover {
+    background-color: #eea236;
+    border-color: #eea236;
+    color: #fff;
+  }
+}

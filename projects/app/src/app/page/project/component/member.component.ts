@@ -38,7 +38,7 @@ import { trpc } from '~app/src/trpcClient';
   template: `
     <div class="border-end shadow rounded-3 h-100 p-3 ">
       <div class="d-flex justify-content-between py-2  ">
-        <h3 class="text-center rounded-3 py-1">Member</h3>
+        <h3 class="text-center rounded-3 py-1"> {{'Members'| translate}} </h3>
         <button
           *ngIf="isOwner"
           class="btn btn-primary"
@@ -96,9 +96,9 @@ import { trpc } from '~app/src/trpcClient';
               style="width: 50px; height: 50px;"
             />
             <div>
-              <h5 class="mb-0">{{ item.User!.name }}</h5>
-              <p class="mb-0 fst-italic " style="font-size: 0.8rem">
-                {{ item.User!.email }}
+              <p class="mb-0 fw-bold">{{ item.User!.email }}</p>
+              <p class="mb-0 fst-italic " style="font-size: 0.8rem" >
+                {{ item.owner ? 'Owner' : 'Member' }}
               </p>
             </div>
           </div>
@@ -127,7 +127,7 @@ export class MemberComponent {
       })
       .then(() => {
         this.errorMessage = null;
-        this.successMessage = `Inviation sent to ${target.value}`;
+        this.successMessage = `{{'InvitedTo | translate'}} ${target.value}`;
       })
       .catch((err: Error) => {
         this.errorMessage = err.message;

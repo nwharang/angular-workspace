@@ -1,0 +1,65 @@
+@import url("https://fonts.googleapis.com/css2?family=Nabla&display=swap");
+nav {
+  .nav-item {
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    padding: 0.5rem 1rem;
+    &:hover {
+      border-bottom: 1px solid #fddf00;
+    }
+    .nav-link {
+      color: #fff;
+      &:hover {
+        color: #fdee7f;
+      }
+      &.active {
+        color: #fddf00;
+        border-bottom: 1px solid #fddf00;
+      }
+    }
+  }
+
+  .navbar-brand {
+    color: #fff;
+    padding-left: 10px;
+    cursor: pointer;
+    &:hover {
+      border-bottom: 1px solid #fddf00;
+    }
+  }
+  form {
+    input {
+      color: #000000;
+      
+      &:focus {
+        border: 1px solid #fddf00;
+        background-color: #ffffff;
+      }
+    }
+  }
+  li {
+    align-self: center;
+  }
+  .navbar-brand {
+    font-family: "font";
+    font-style: italic;
+    font-size: 2em;
+    text-align: center;
+    color: #fddf00;
+  }
+}
+button {
+  color: #fff;
+  &:hover {
+    border: 1px solid #fddf00;
+    box-shadow: #fddf00;
+    background-color: #010101;
+  }
+}
+.bg-nav {
+  background-color: rgba($color: #451940, $alpha: 0.9) ;
+}
+.bg-navbar{
+  background-color: rgba($color: #51184e, $alpha: 0.5) ;
+}

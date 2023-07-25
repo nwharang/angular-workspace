@@ -44,11 +44,11 @@ declare var bootstrap: any;
           <div class="modal-header">
             <h1 class="modal-title fs-4 fw-bold" id="ModalLabel">
               <i class="fa-solid fa-tablet-screen-button"></i>
-              {{ TaskDetail?.name }}
+              {{ TaskDetail.name }}
               <br />
               <span class="fs-6">in </span
               ><span class="badge bg-primary me-3"
-                >{{ TaskDetail?.status }}
+                >{{ TaskDetail.status }}
               </span>
             </h1>
             <button
@@ -66,94 +66,110 @@ declare var bootstrap: any;
                 (ngSubmit)="updateTask()"
               >
                 <dl class="row ps-3 pt-3">
-                  <dt class=" col-sm-2 fw-bold fw-1 me-2">Task Name:</dt>
-                  <dd class="col-sm-9">
+                  <dt class=" col-sm-3 fw-bold fw-1 me-2">
+                    {{ 'TaskName' | translate }}:
+                  </dt>
+                  <dd class="col-sm-8">
                     <input
                       type="text"
                       class=" w-auto border rounded py-2 px-3"
                       name="name"
-                      [(ngModel)]="data.name"
-                      [value]="TaskDetail?.name"
+                      [(ngModel)]="TaskDetail.name"
+                      [value]="TaskDetail.name"
                       [disabled]="updateInput"
                     />
                   </dd>
-                </dl>
-                <dl class="row ps-3 pt-3">
-                  <dt class="col-sm-2  fw-bold me-2">effDate :</dt>
-                  <dd class="col-sm-3 me-2">
+                  <dt class="col-sm-3  fw-bold me-2">
+                    {{ 'TaskStartDate' | translate }} :
+                  </dt>
+                  <dd class="col-sm-8 ">
                     <input
                       type="date"
                       class="py-2 px-3 border rounded"
                       name="eff"
-                      [valueAsDate]="TaskDetail?.effDate"
+                      [valueAsDate]="TaskDetail.effDate"
                       disabled
                     />
                   </dd>
-                  <dt class=" col-sm-2  fw-bold me-2">endDate :</dt>
-                  <dd class=" col-sm-3 me-2">
+                  <dt class=" col-sm-3  fw-bold me-2">
+                    {{ 'TaskEndDate' | translate }} :
+                  </dt>
+                  <dd class=" col-sm-8 ">
                     <input
                       type="date"
                       class="py-2 px-3 border rounded"
+                      #endDate
                       name="endDate"
-                      [(ngModel)]="data.endDate"
                       [disabled]="updateInput"
-                      [valueAsDate]="TaskDetail?.endDate"
+                      [valueAsDate]="TaskDetail.endDate"
+                      (change)="onChangeHandler(endDate)"
                     />
                   </dd>
-                </dl>
-                <dl class="row ps-3 pt-3">
-                  <dt class="col-sm-2">
-                    <span class="fw-bold">Status :</span>
+                  <dt class="col-sm-3 me-2">
+                    <span class="fw-bold"
+                      >{{ 'TaskStatus' | translate }} :</span
+                    >
                   </dt>
-                  <dd class="col-sm-9">
+                  <dd class="col-sm-8">
                     <select
-                      class="form-select w-auto"
+                      class="form-select w-auto me-2"
                       name="status"
-                      [(ngModel)]="data.status"
-                      [value]="TaskDetail?.status"
+                      [(ngModel)]="TaskDetail.status"
+                      [value]="TaskDetail.status"
                       [disabled]="updateInput"
                     >
-                      <option value="InProgress">InProgress</option>
-                      <option value="Backlog">Backlog</option>
-                      <option value="Completed">Completed</option>
+                      <option value="InProgress">
+                        {{ 'InProgress' | translate }}
+                      </option>
+                      <option value="Backlog">
+                        {{ 'Backlog' | translate }}
+                      </option>
+                      <option value="Completed">
+                        {{ 'Completed' | translate }}
+                      </option>
                     </select>
                   </dd>
-                  <dt class="col-sm-2">
-                    <span class="fw-bold">Member :</span>
-                  </dt>
-                  <dd class="col-sm-9">
-                    <span class="badge bg-primary" *ngIf="updateInput">
-                      {{ filterMemberList(TaskDetail?.memberId) }}
+                  <dt class="col-sm-3 me-2">
+                    <span class="fw-bold">
+                      {{ 'TaskAssignee' | translate }} :
                     </span>
+                  </dt>
+                  <dd class="col-sm-8">
                     <select
                       class="form-select w-auto"
                       name="memberId"
                       placeholder="Task name"
-                      [(ngModel)]="data.memberId"
-                      [value]="TaskDetail?.memberId"
-                      *ngIf="!updateInput"
+                      [(ngModel)]="TaskDetail.memberId"
+                      [value]="TaskDetail.memberId"
+                      [disabled]="updateInput"
                     >
                       <option *ngFor="let item of memberList" [value]="item.id">
                         {{ item.User!.name }}
                       </option>
                     </select>
                   </dd>
-                  <dt class="col-sm-2">
-                    <span class="fw-bold">Created At :</span>
-                  </dt>
-                  <dd class="col-sm-9">
-                    <span class="badge bg-secondary ">
-                      {{ TaskDetail?.createdAt | date : 'dd/MM/yyyy' }}
-                    </span>
-                  </dd>
-                  <dt class="col-sm-2">
-                    <span class="fw-bold">Update At :</span>
-                  </dt>
-                  <dd class="col-sm-9">
-                    <span class="badge bg-secondary ">
-                      {{ TaskDetail?.updatedAt | date : 'dd/MM/yyyy' }}
-                    </span>
-                  </dd>
+                  <div class="d-flex">
+                    <dt>
+                      <span class="fst-italic fw-lighter"
+                        >{{ 'TaskCreatedDate' | translate }}:</span
+                      >
+                    </dt>
+                    <dd class="px-3">
+                      <span class="badge bg-secondary ">
+                        {{ TaskDetail.createdAt | date : 'dd/MM/yyyy' }}
+                      </span>
+                    </dd>
+                    <dt>
+                      <span class="fst-italic fw-lighter"
+                        >{{ 'TaskUpdatedDate' | translate }}:</span
+                      >
+                    </dt>
+                    <dd class="px-3">
+                      <span class="badge bg-secondary ">
+                        {{ TaskDetail.updatedAt | date : 'dd/MM/yyyy' }}
+                      </span>
+                    </dd>
+                  </div>
                 </dl>
 
                 <div>
@@ -162,14 +178,14 @@ declare var bootstrap: any;
                       class="fa-solid fa-audio-description"
                       style="color: #2a436f;"
                     ></i>
-                    Description :
+                    {{ 'TaskDescription' | translate }} :
                   </label>
                   <textarea
                     class=" form-control "
                     [disabled]="updateInput"
                     name="description"
-                    [(ngModel)]="data.description"
-                    [value]="TaskDetail?.description"
+                    [(ngModel)]="TaskDetail.description"
+                    [value]="TaskDetail.description"
                   >
                   </textarea>
                 </div>
@@ -179,19 +195,19 @@ declare var bootstrap: any;
                     class="btn btn-info"
                     (ngSubmit)="updateTask()"
                   >
-                    Save
+                    {{ 'Save' | translate }}
                   </button>
                 </div>
               </form>
               <div class="col-3">
-                <h3>Action</h3>
-                <div class="d-flex flex-wrap">
+                <h3>{{ 'Action' | translate }}</h3>
+                <div class="d-flex flex-column">
                   <button
                     class="btn btn-primary me-2 me mb-3 flex-grow-1"
                     (click)="update()"
                   >
                     <i class="fa-solid fa-edit " style="color: #ffffff;"></i>
-                    Update
+                    {{ 'Update' | translate }}
                   </button>
                   <button
                     class="btn btn-danger me-2 me mb-3 flex-grow-1"
@@ -201,7 +217,7 @@ declare var bootstrap: any;
                       class="fa-solid fa-trash-can"
                       style="color: #ffffff;"
                     ></i>
-                    Delete
+                    {{ 'Delete' | translate }}
                   </button>
                   <button
                     class="btn btn-success flex-grow-1"
@@ -211,7 +227,7 @@ declare var bootstrap: any;
                       class="fa-solid fa-angles-right"
                       style="color: #ffffff;"
                     ></i>
-                    {{ updateStatus(TaskDetail?.status) }}
+                    {{ updateStatus(TaskDetail.status) | translate }}
                   </button>
                   <div
                     *ngIf="error && showMessage"
@@ -230,7 +246,7 @@ declare var bootstrap: any;
 
                   <div *ngIf="isoke">
                     <h5 class="mt-3 mb-3">
-                      Bạn có chắc muốn xóa {{ TaskDetail?.name }}
+                      Bạn có chắc muốn xóa {{ TaskDetail.name }}
                     </h5>
                     <button
                       type="button"
@@ -266,7 +282,7 @@ declare var bootstrap: any;
   `,
 })
 export class DetailTaskComponent {
-  @Input() TaskDetail: Task | null = null;
+  @Input() TaskDetail: Task = {} as Task;
   memberList: MemberWithUser[] = [];
   isOwner: boolean = false;
   isoke = false;
@@ -277,21 +293,6 @@ export class DetailTaskComponent {
   move: string = 'Move';
   showMessage: boolean = false;
   @Output() changeTaskList = new EventEmitter();
-  data: {
-    id: string;
-    memberId: string;
-    name: string;
-    description: string;
-    status: Status;
-    endDate: Date;
-  } = {
-    id: '',
-    memberId: '',
-    name: '',
-    description: '',
-    status: Status.Backlog,
-    endDate: new Date(),
-  };
   constructor(
     private router: ActivatedRoute,
     private memberService: MemberService
@@ -337,12 +338,12 @@ export class DetailTaskComponent {
   async updateTask() {
     await trpc.task.updateTask
       .mutate({
-        id: this.data.id,
-        name: this.data.name,
-        description: this.data.description,
-        status: this.data.status,
-        endDate: new Date(this.data.endDate),
-        memberId: this.data.memberId,
+        id: this.TaskDetail.id,
+        name: this.TaskDetail.name,
+        description: this.TaskDetail.description!,
+        status: this.TaskDetail.status,
+        endDate: new Date(this.TaskDetail.endDate),
+        memberId: this.TaskDetail.memberId,
         projectId: this.projectId,
       })
       .then(() => {
@@ -352,7 +353,7 @@ export class DetailTaskComponent {
         this.showMessage = true;
         setTimeout(() => {
           this.showMessage = false;
-        }, 3000);
+        }, 2000);
       })
       .catch((err) => {
         this.error = err;
@@ -373,30 +374,30 @@ export class DetailTaskComponent {
     }
   }
   async update() {
-    this.data.id = this.TaskDetail?.id as string;
-    this.data.name = this.TaskDetail?.name as string;
+    this.TaskDetail.id = this.TaskDetail.id as string;
+    this.TaskDetail.name = this.TaskDetail.name as string;
     this.updateInput = !this.updateInput;
-    this.data.memberId = this.TaskDetail?.memberId as string;
-    this.data.description = this.TaskDetail?.description as string;
-    this.data.status = this.TaskDetail?.status as Status;
-    this.data.endDate = this.TaskDetail?.endDate as Date;
+    this.TaskDetail.memberId = this.TaskDetail.memberId as string;
+    this.TaskDetail.description = this.TaskDetail.description as string;
+    this.TaskDetail.status = this.TaskDetail.status as Status;
+    this.TaskDetail.endDate = this.TaskDetail.endDate as Date;
   }
 
   async moveTask() {
     this.update();
-    switch (this.data.status) {
+    switch (this.TaskDetail.status) {
       case Status.Backlog:
-        this.data.status = Status.InProgress;
+        this.TaskDetail.status = Status.InProgress;
         this.updateTask();
         break;
       case Status.InProgress:
-        this.data.status = Status.Completed;
+        this.TaskDetail.status = Status.Completed;
         this.move = 'Completed';
         this.updateTask();
         break;
       case Status.Completed:
         this.move = 'Done';
-        this.deleteTask(this.data.id, 'delete');
+        this.deleteTask(this.TaskDetail.id, 'delete');
     }
   }
 
@@ -410,5 +411,9 @@ export class DetailTaskComponent {
         return (this.move = 'Done');
     }
     return this.move;
+  }
+
+  onChangeHandler(e: HTMLInputElement) {
+    this.TaskDetail.endDate=new Date(e.value)
   }
 }

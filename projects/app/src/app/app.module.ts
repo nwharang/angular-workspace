@@ -3,11 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { MainComponent } from './layout/main.component';
-import { LoginComponent } from './page/login.component';
 import { HomeComponent } from './page/home.component';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { RegisterComponent } from './page/register.component';
 import { trpc } from '../trpcClient';
 import { Observable, Observer } from 'rxjs';
 import { Localize } from '@prisma/client';
@@ -34,9 +32,7 @@ export function HttpLoaderFactory() {
 @NgModule({
   declarations: [
     MainComponent,
-    LoginComponent,
     HomeComponent,
-    RegisterComponent,
     ProjectComponent,
     DetailTaskComponent,
     NewTaskComponent,

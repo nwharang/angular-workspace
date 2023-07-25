@@ -1,1 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+// @import url("assets/font.ttf");
+@font-face {
+    font-family: 'font';
+    src: url("assets/font.ttf");
+}
+$color: purple;
+@for $i from 20 through 100 {
+  @if $i % 10 == 0 {
+    $percentage: $i*1%;
+    .darken-#{$i} {
+      background-color: darken($color, $percentage);
+    }
+    .lighten-#{$i} {
+      background-color: lighten($color, $percentage);
+    }
+    .mix-black-#{$i} {
+      background-color: mix(black, $color, $percentage);
+    }
+    .mix-white-#{$i} {
+      background-color: mix(white, $color, $percentage);
+    }
+  }
+}
+.bg-puple {
+    background-color: $color;
+}
+

@@ -96,17 +96,20 @@ declare var bootstrap: any;
                   <option value="Completed">Completed</option>
                 </select>
               </div>
-              <div *ngIf="error" class="alert alert-danger" role="alert">
-                <h4 class="alert-heading">{{ error }}</h4>
+              <div *ngIf="showError">
+                <div *ngIf="error" class="alert alert-danger" role="alert">
+                  <p class="alert-heading">{{ error }}</p>
+                </div>
               </div>
-              <div *ngIf="message" class="alert alert-success" role="alert">
-                <h4 class="alert-heading">{{ message }}</h4>
+              <div *ngIf="showMessage">
+                <div *ngIf="message" class="alert alert-success" role="alert">
+                  <p class="alert-heading">{{ message }}</p>
+                </div>
               </div>
               <button type="submit" class="btn btn-primary">Create</button>
             </form>
           </div>
           <div class="modal-footer">
-            <button (click)="closeModal()">adasd</button>
             <button
               type="button"
               class="btn btn-secondary"
@@ -124,6 +127,8 @@ export class NewTaskComponent {
   error: [string, string] | null = null;
   message: [string] | null = null;
   projectid: string;
+  showMessage = false;
+  showError = false;
   @Output() changeTaskList = new EventEmitter();
   data: {
     memberId: string;
@@ -161,14 +166,22 @@ export class NewTaskComponent {
           projectId: this.projectid,
         })
         .then(() => {
+          this.showMessage = true;
           this.message = [`Create task ${this.data.name} success`];
           this.error = null;
           this.changeTaskList.emit();
           setTimeout(this.closeModal, 1000);
+          setTimeout(() => {
+            this.showMessage = false;
+          }, 2000);
         })
         .catch((err) => {
+          this.showError = true;
           this.error = err;
           this.message = null;
+          setTimeout(() => {
+            this.showError = false;
+          }, 2000);
         });
     }
     frm.reset();

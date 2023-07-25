@@ -1,0 +1,97 @@
+.about {
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  ul {
+    padding: 0;
+    margin: 0;
+    li {
+      margin-right: 10px;
+      padding-top: 20px;
+    }
+  }
+}
+
+.col {
+ 
+  a {
+    color: #51194e;
+    text-decoration: none;
+  }
+  .card {
+    border: 1px solid #b43fae;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    &:hover {
+      border: 1px solid #ffc107;
+      box-shadow: #f8ef9f;
+      background-color: #f8fbe4;
+      box-shadow: rgba(0, 0, 0, 0.5) 20px 20px 30px;
+      transform: scale(1.01);
+    }
+    .card-title {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .card-text {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .card-img-top {
+      border-radius: 10px;
+    }
+    .deal {
+      background-color: #51194e;
+      color: #ffffff;
+      display: block;
+      padding: 5px 10px;
+      text-align: center;
+    }
+    button{
+      color: #51194e;
+      background-color: #faf3b5;
+      border: 1px solid #fddf00;
+      &:hover {
+        border: 1px solid #51194e;
+        box-shadow: #fddf00;
+        background-color: #ffffff;
+        color: #51194e;
+      }
+    }
+    .details{
+      color: #511919;
+      z-index: 10;
+      &:hover {
+        border-bottom: 2px solid #fddf00;
+        color: #fddf00;
+       
+      }
+    }
+  }
+}
+.about{
+  background-image: url("/assets/images/listening-headphones.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  ul{
+    li{
+      list-style: none;
+      color: #ffffff;
+      h3{
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #ffc107;
+      }
+      p{
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+
+.blog{
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

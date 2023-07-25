@@ -1,0 +1,27 @@
+footer {
+    background-color: #521A4D;
+    .social{
+        a{
+            margin: 0 1rem;
+            color: #fddf00;
+            font-size: 20px;
+            &:hover{
+                color: #fddf00;
+                border-bottom: #fddf00 2px solid;
+            }
+            i{
+                align-self: center;
+                font-size: 2em;
+
+            }
+        }
+    }
+  .footer-end {
+    background-color: #521A4D;
+    padding: 15px 0;
+    text-align: center;
+    font-size: 14px;
+    color: #fddf00;
+    width: 100%;
+  }
+}

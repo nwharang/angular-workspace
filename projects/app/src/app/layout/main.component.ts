@@ -15,13 +15,16 @@ import { Router } from '@angular/router';
     >
       <div *ngIf="loading">
         <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+          <span class="visually-hidden">{{ 'Loading' | translate }}</span>
         </div>
-        <p>{{ 'Loading...' | translate }}</p>
+        <p>{{ 'Loading' | translate }}</p>
       </div>
       <div *ngIf="!loading" class="d-flex flex-column">
         <div class="d-flex gap-3 mt-3">
-          <lib-auth (dataInput)="logData($event)" />
+          <lib-auth
+            (dataInput)="login($event)"
+            (dataRegister)="register($event)"
+          />
         </div>
       </div>
     </div>
@@ -44,7 +47,7 @@ import { Router } from '@angular/router';
             class="navbar-brand mt-2 mt-lg-0 comingsoon fw-bolder"
             routerLink="/home"
           >
-            Ten Trang Web
+            TaskManager App
           </a>
         </div>
         <form class="d-flex input-group w-auto gap-3 align-items-center">
@@ -67,7 +70,7 @@ import { Router } from '@angular/router';
           <div>
             <ng-container *ngIf="signIn">
               <button type="button" class="btn btn-primary" (click)="logout()">
-                {{ 'SignOut' | translate }}
+                {{ 'Logout' | translate }}
               </button>
             </ng-container>
           </div>
@@ -90,6 +93,7 @@ export class MainComponent implements OnInit {
   loading = true;
   signIn = false;
   data = 'Hello';
+  error = '';
   constructor(
     public translate: TranslateService,
     public authService: AuthService,
@@ -133,8 +137,32 @@ export class MainComponent implements OnInit {
   async search(param: string) {
     console.log(param);
   }
+  async login(event: { email: string; password: string }) {
+    await trpc.auth.login
+      .mutate(event)
+      .catch((err) => {
+        this.error = err.message;
+        console.log(err);
+      })
+      .then((res) => {
+        if (res) {
+          this.signIn = true;
+          location.pathname = '/';
+        }
+      });
+  }
 
-  logData(event: { email: string; password: string }) {
-    console.log(event);
+  async register(event: { email: string; password: string }) {
+    await trpc.auth.register
+      .mutate(event)
+      .catch((err) => {
+        console.log(err);
+      })
+      .then((res) => {
+        if (res) {
+          this.signIn = true;
+          this.router.navigate(['/home']);
+        }
+      });
   }
 }
