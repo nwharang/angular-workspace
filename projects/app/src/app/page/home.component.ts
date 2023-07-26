@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { InvitationStatus, Prisma, Project } from '@prisma/client';
 import { trpc } from '~app/src/trpcClient';
 import { AuthService } from '../services/auth.service';
+import { NgForm } from '@angular/forms';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any, no-var
 declare var bootstrap: any;
@@ -107,7 +108,7 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
     <!-- Modal project -->
     <form
       #frm="ngForm"
-      (ngSubmit)="createNewProject($event)"
+      (ngSubmit)="createNewProject($event, frm)"
       class="modal fade"
       id="modalNewProject"
       tabindex="-1"
@@ -136,11 +137,24 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
                 <input
                   type="text"
                   class="form-control"
-                  required
                   name="name"
                   placeholder="Project name"
                   [(ngModel)]="data.name"
+                  required
+                  #name="ngModel"
+                  minlength="3"
                 />
+                <div *ngIf="name.invalid && (name.dirty || name.touched)">
+                  <div class="alert alert-danger" *ngIf="name.errors?.required">
+                    {{ 'NameProjectRequired' | translate }}
+                  </div>
+                  <div
+                    class="alert alert-danger"
+                    *ngIf="name.errors?.minlength"
+                  >
+                    {{ 'NameProjectMinLength' | translate }}
+                  </div>
+                </div>
               </div>
               <div class="mb-3">
                 <label for="description" class="form-label">{{
@@ -151,9 +165,30 @@ type MemberWithProject = Prisma.MemberGetPayload<typeof MemberWithProject>;
                   name="description"
                   rows="10"
                   required
+                  #description="ngModel"
+                  minlength="3"
                   placeholder="Task description"
                   [(ngModel)]="data.description"
                 ></textarea>
+                <div
+                  *ngIf="
+                    description.invalid &&
+                    (description.dirty || description.touched)
+                  "
+                >
+                  <div
+                    class="alert alert-danger"
+                    *ngIf="description.errors?.required"
+                  >
+                    {{ 'DescriptionRequired' | translate }}
+                  </div>
+                  <div
+                    class="alert alert-danger"
+                    *ngIf="description.errors?.minlength"
+                  >
+                    {{ 'DescriptionMinLength' | translate }}
+                  </div>
+                </div>
               </div>
 
               <div *ngIf="error" class="alert alert-danger" role="alert">
@@ -218,7 +253,8 @@ export class HomeComponent implements OnInit {
     this.memberList = res;
     this.loadProject();
   }
-  async createNewProject(event: Event): Promise<void> {
+  async createNewProject(event: Event, frm: NgForm): Promise<void> {
+    if (!frm.valid) return;
     event.preventDefault();
     const res = await trpc.project.create.mutate({
       name: this.data.name,
@@ -227,6 +263,7 @@ export class HomeComponent implements OnInit {
     if (res) this.loadProject();
     this.closeModal();
   }
+
   async deleteProject(item: Project): Promise<void> {
     const res = await trpc.project.delete.mutate({ id: item.id });
     if (res) this.loadProject();

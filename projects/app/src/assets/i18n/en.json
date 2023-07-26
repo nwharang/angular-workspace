@@ -43,6 +43,11 @@
   "TaskStartDate": "Start date",
   "TaskEndDate": "End date",
   "TaskCreatedDate": "Created date",
-  "TaskUpdatedDate": "Updated date"
+  "TaskUpdatedDate": "Updated date",
+  "NameProjectRequired": "Name project is required.",
+  "DescriptionRequired": "Description is required.",
+  "NameProjectMinLength": "Name project must be at least 3 characters long.",
+  "DescriptionMinLength": "Description must be at least 3 characters long."
+
 
 }

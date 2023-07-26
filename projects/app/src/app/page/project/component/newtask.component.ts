@@ -45,8 +45,28 @@ declare var bootstrap: any;
                   name="name"
                   placeholder="Task name"
                   [(ngModel)]="data.name"
+                  required
+                  minlength="4"
+                  #Name="ngModel"
                 />
+                <div class="error" *ngIf="Name.invalid && Name.touched">
+                  <div
+                    *ngIf="frm.controls['name'].errors?.required"
+                    class="alert alert-danger"
+                    role="alert"
+                  >
+                    Name is required
+                  </div>
+                  <div
+                    *ngIf="frm.controls['name'].errors?.minlength"
+                    class="alert alert-danger"
+                    role="alert"
+                  >
+                    Name must be at least 4 characters
+                  </div>
+                </div>
               </div>
+
               <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
                 <textarea
@@ -55,7 +75,29 @@ declare var bootstrap: any;
                   rows="3"
                   placeholder="Task description"
                   [(ngModel)]="data.description"
+                  required
+                  minlength="4"
+                  #Description="ngModel"
                 ></textarea>
+                <div
+                  class="error"
+                  *ngIf="Description.invalid && Description.touched"
+                >
+                  <div
+                    *ngIf="frm.controls['description'].errors?.required"
+                    class="alert alert-danger"
+                    role="alert"
+                  >
+                    Description is required
+                  </div>
+                  <div
+                    *ngIf="frm.controls['description'].errors?.minlength"
+                    class="alert alert-danger"
+                    role="alert"
+                  >
+                    Description must be at least 4 characters
+                  </div>
+                </div>
               </div>
 
               <div class="mb-3">
@@ -65,22 +107,52 @@ declare var bootstrap: any;
                   name="memberId"
                   placeholder="Task name"
                   [(ngModel)]="data.memberId"
+                  required
+                  #MemberId="ngModel"
                 >
                   <option *ngFor="let item of memberList" [value]="item.id">
                     {{ item.User!.name }}
                   </option>
                 </select>
+                <div class="error" *ngIf="MemberId.invalid && MemberId.touched">
+                  <div
+                    *ngIf="frm.controls['memberId'].errors?.required"
+                    class="alert alert-danger"
+                    role="alert"
+                  >
+                    Member is required
+                  </div>
+                </div>
               </div>
 
               <div class="mb-3">
                 <label for="endDate" class="form-label">End Date</label>
                 <input
-                  type="date"
                   class="form-control"
                   name="endDate"
+                  type="date"
                   placeholder="Task name"
                   [(ngModel)]="data.endDate"
+                  min="{{ today | date: 'yyyy-MM-dd' }}"
+                  required
+                  #EndDate="ngModel"
                 />
+                <div class="error" *ngIf="EndDate.invalid && EndDate.touched">
+                  <div
+                    *ngIf="frm.controls['endDate'].errors?.required"
+                    class="alert alert-danger"
+                    role="alert"
+                  >
+                    End Date is required
+                  </div>
+                  <div
+                    *ngIf="frm.controls['endDate'].errors?.min"
+                    class="alert alert-danger"
+                    role="alert"
+                  >
+                    End Date must be greater than today
+                  </div>
+                </div>
               </div>
               <div class="mb-3">
                 <label for="status" class="form-label">Status</label>
@@ -129,6 +201,7 @@ export class NewTaskComponent {
   projectid: string;
   showMessage = false;
   showError = false;
+  today = new Date() as Date;
   @Output() changeTaskList = new EventEmitter();
   data: {
     memberId: string;

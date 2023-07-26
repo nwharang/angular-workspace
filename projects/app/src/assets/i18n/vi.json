@@ -52,5 +52,9 @@
   "TaskStatusMessageErrorCreate": "Tạo công việc thất bại.",
   "TaskStatusMessageSuccessCreate": "Tạo công việc thành công.",
   "TaskStatusMessageErrorUpdate": "Cập nhật công việc thất bại.",
-  "TaskStatusMessageSuccessUpdate": "Cập nhật công việc thành công."
+  "TaskStatusMessageSuccessUpdate": "Cập nhật công việc thành công.",
+  "NameProjectRequired": "Tên dự án là bắt buộc.",
+  "DescriptionRequired": "Mô tả là bắt buộc.",
+  "NameProjectMinLength": "Tên dự án phải có ít nhất 3 ký tự.",
+  "DescriptionMinLength": "Mô tả phải có ít nhất 3 ký tự."
 }

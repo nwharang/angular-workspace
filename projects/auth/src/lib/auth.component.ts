@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'lib-auth',
@@ -30,7 +31,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 
             <div class="col-md-6 col-lg-7 d-flex align-items-center">
               <div class="card-body p-4 p-lg-5 text-black" *ngIf="showLogin">
-                <form #frm="ngForm">
+                <form #frm="ngForm" (ngSubmit)="login(frm)">
                   <h5
                     class="fw-bold mb-3 pb-3 display-5"
                     style="letter-spacing: 1px;"
@@ -48,7 +49,34 @@ import { Component, EventEmitter, Output } from '@angular/core';
                       id="form2Example17"
                       class="form-control form-control-lg"
                       [(ngModel)]="data.email"
+                      required
+                      email="true"
+                      #email="ngModel"
                     />
+                    <div
+                      *ngIf="
+                        email.invalid && (email.dirty || email.touched)
+                          ? email.errors
+                          : ''
+                      "
+                      class="alert alert-danger"
+                    >
+                      <div
+                        *ngIf="
+                          email.errors?.required &&
+                          (email.dirty || email.touched)
+                        "
+                      >
+                        Email is required
+                      </div>
+                      <div
+                        *ngIf="
+                          email.errors?.email && (email.dirty || email.touched)
+                        "
+                      >
+                        Email is invalid
+                      </div>
+                    </div>
                   </div>
 
                   <div class="form-outline mb-4">
@@ -61,14 +89,39 @@ import { Component, EventEmitter, Output } from '@angular/core';
                       class="form-control form-control-lg"
                       name="password"
                       [(ngModel)]="data.password"
+                      required
+                      minlength="8"
+                      #password="ngModel"
                     />
+                    <div
+                      *ngIf="
+                        password.invalid && (password.dirty || password.touched)
+                      "
+                      class="alert alert-danger"
+                    >
+                      <div
+                        *ngIf="
+                          password.errors?.required &&
+                          (password.dirty || password.touched)
+                        "
+                      >
+                        Password is required
+                      </div>
+                      <div
+                        *ngIf="
+                          password.errors?.minlength &&
+                          (password.dirty || password.touched)
+                        "
+                      >
+                        Password must be at least 8 characters
+                      </div>
+                    </div>
                   </div>
 
                   <div class="pt-1 mb-4">
                     <button
                       class="btn btn-dark btn-lg btn-block "
-                      (click)="login()"
-                      type="button"
+                      type="submit"
                     >
                       Login
                     </button>
@@ -99,11 +152,38 @@ import { Component, EventEmitter, Output } from '@angular/core';
                     >
                     <input
                       type="email"
-                      [(ngModel)]="data.email"
                       name="email"
                       id="form2Example17"
                       class="form-control form-control-lg"
+                      [(ngModel)]="data.email"
+                      required
+                      email="true"
+                      #email="ngModel"
                     />
+                    <div
+                      *ngIf="
+                        email.invalid && (email.dirty || email.touched)
+                          ? email.errors
+                          : ''
+                      "
+                      class="alert alert-danger"
+                    >
+                      <div
+                        *ngIf="
+                          email.errors?.required &&
+                          (email.dirty || email.touched)
+                        "
+                      >
+                        Email is required
+                      </div>
+                      <div
+                        *ngIf="
+                          email.errors?.email && (email.dirty || email.touched)
+                        "
+                      >
+                        Email is invalid
+                      </div>
+                    </div>
                   </div>
 
                   <div class="form-outline mb-4">
@@ -112,11 +192,37 @@ import { Component, EventEmitter, Output } from '@angular/core';
                     >
                     <input
                       type="password"
-                      [(ngModel)]="data.password"
-                      name="password"
                       id="form2Example27"
                       class="form-control form-control-lg"
+                      name="password"
+                      [(ngModel)]="data.password"
+                      required
+                      minlength="8"
+                      #password="ngModel"
                     />
+                    <div
+                      *ngIf="
+                        password.invalid && (password.dirty || password.touched)
+                      "
+                      class="alert alert-danger"
+                    >
+                      <div
+                        *ngIf="
+                          password.errors?.required &&
+                          (password.dirty || password.touched)
+                        "
+                      >
+                        Password is required
+                      </div>
+                      <div
+                        *ngIf="
+                          password.errors?.minlength &&
+                          (password.dirty || password.touched)
+                        "
+                      >
+                        Password must be at least 8 characters
+                      </div>
+                    </div>
                   </div>
 
                   <div class="pt-1 mb-4">
@@ -164,7 +270,10 @@ export class AuthComponent {
     password: '',
   };
 
-  login() {
+  login(frm: NgForm) {
+    if (frm.invalid) {
+      return;
+    }
     this.dataInput.emit(this.data);
   }
   register() {

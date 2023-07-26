@@ -12,7 +12,6 @@ export class MainLayoutComponent implements OnInit {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.url = event.url;
-        console.log(this.url);
 
         if (this.url === '/home') {
           this.showHeroNav = true;

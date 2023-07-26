@@ -103,6 +103,8 @@ declare var bootstrap: any;
                       [disabled]="updateInput"
                       [valueAsDate]="TaskDetail.endDate"
                       (change)="onChangeHandler(endDate)"
+                      required
+                      min="{{ TaskDetail.effDate | date : 'yyyy-MM-dd' }}"
                     />
                   </dd>
                   <dt class="col-sm-3 me-2">
@@ -414,6 +416,6 @@ export class DetailTaskComponent {
   }
 
   onChangeHandler(e: HTMLInputElement) {
-    this.TaskDetail.endDate=new Date(e.value)
+    this.TaskDetail.endDate = new Date(e.value);
   }
 }
