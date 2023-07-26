@@ -244,7 +244,6 @@ import { NgForm } from '@angular/forms';
                       >Login here</a
                     >
                   </p>
-                  <a href="#!" class="small text-muted">Privacy policy</a>
                 </form>
               </div>
             </div>
