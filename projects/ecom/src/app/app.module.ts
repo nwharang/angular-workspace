@@ -14,13 +14,10 @@ import { AuthComponent } from './pages/auth/auth.component';
 import { UserComponent } from './pages/user/user.component';
 import { CartComponent } from './pages/cart/cart.component';
 import { CheckOutComponent } from './pages/check-out/check-out.component';
-import { AdminComponent } from './pages/admin/admin.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { ProductDetailComponent } from './pages/productDetail/product-detail.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-
-
 
 @NgModule({
   declarations: [
@@ -37,19 +34,17 @@ import { HttpClientModule } from '@angular/common/http';
     UserComponent,
     CartComponent,
     CheckOutComponent,
-    AdminComponent,
     PageNotFoundComponent,
-    ProductDetailComponent
+    ProductDetailComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [],
-  bootstrap: [MainLayoutComponent
-  ]
+  bootstrap: [MainLayoutComponent],
 })
-export class AppModule { }
+export class AppModule {}

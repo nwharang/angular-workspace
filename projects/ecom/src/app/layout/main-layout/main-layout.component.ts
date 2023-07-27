@@ -13,7 +13,14 @@ export class MainLayoutComponent implements OnInit {
       if (event instanceof NavigationEnd) {
         this.url = event.url;
 
-        if (this.url === '/home') {
+        if (
+          this.url === '/home' ||
+          this.url === '/' ||
+          this.url === '/admin' ||
+          this.url === '/admin/products' ||
+          this.url === '/admin/orders' ||
+          this.url === '/admin/customers'
+        ) {
           this.showHeroNav = true;
         } else {
           this.showHeroNav = false;

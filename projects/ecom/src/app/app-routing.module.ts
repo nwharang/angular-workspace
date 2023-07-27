@@ -68,6 +68,17 @@ const routes: Routes = [
       description: 'This is the description of the Product Detail Page',
     },
   },
+
+  {
+    path: 'admin',
+    loadChildren: () =>
+      import('./admin/admin.module').then((m) => m.AdminModule),
+    title: 'Admin Page - HeadPhone Store',
+    data: {
+      title: 'Admin Page - HeadPhone Store',
+      description: 'This is the description of the Admin Page',
+    },
+  },
   {
     path: '**',
     component: PageNotFoundComponent,
@@ -81,7 +92,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' }),
   ],
   exports: [RouterModule],
 })
