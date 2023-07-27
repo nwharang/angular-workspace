@@ -4,10 +4,16 @@ import { router } from '~server/Utils/trpc.utils';
 import { publicProcedure } from '~server/Utils/trpc.utils';
 
 export const productRoute = router({
-  list: publicProcedure.query(({ ctx }) => {
-    return new ProductController().getProducts(ctx);
-  }),
-    
+  list: publicProcedure
+    .input(
+      z.object({
+        page: z.string(),
+      })
+    )
+    .query(({ ctx, input }) => {
+      return new ProductController().getProducts(ctx, input);
+    }),
+
   get: publicProcedure
     .input(
       z.object({
@@ -17,6 +23,4 @@ export const productRoute = router({
     .query(({ ctx, input }) => {
       return new ProductController().getProductById(ctx, input);
     }),
-  
 });
-

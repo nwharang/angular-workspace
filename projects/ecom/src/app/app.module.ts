@@ -13,11 +13,14 @@ import { BlogComponent } from './pages/blog/blog.component';
 import { AuthComponent } from './pages/auth/auth.component';
 import { UserComponent } from './pages/user/user.component';
 import { CartComponent } from './pages/cart/cart.component';
+import { AuthModule } from 'auth';
+
 import { CheckOutComponent } from './pages/check-out/check-out.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { ProductDetailComponent } from './pages/productDetail/product-detail.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -43,6 +46,9 @@ import { HttpClientModule } from '@angular/common/http';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    AuthModule,
+    NgbModule,
+    NgbPaginationModule,
   ],
   providers: [],
   bootstrap: [MainLayoutComponent],

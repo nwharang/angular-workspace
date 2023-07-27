@@ -3,7 +3,10 @@
   "extends": "../ecom/tsconfig.app.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/server",
-    "types": ["node"]
+    "types": [
+      "node",
+      "@angular/localize"
+    ]
   },
   "files": ["../ecom/src/main.server.ts", "ecomserver.ts"]
 }

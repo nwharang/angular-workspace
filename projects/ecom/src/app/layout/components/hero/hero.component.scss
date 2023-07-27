@@ -1,14 +1,10 @@
 section {
-  background-image: url("/assets/images/slider.webp");
-  height: 50em;
+  background-image: url("/assets/images/slider.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   background-position: inherit;
-  @media screen and (max-width: 768px) {
-    height: 30em;
-  }
-    @media screen and (max-width: 576px) {
-        height: 25em;
-    }
-
+  padding-top: 75px;
 }
 
 .btn-warning-outline {
@@ -18,5 +14,11 @@ section {
     background-color: #eea236;
     border-color: #eea236;
     color: #fff;
+  }
+}
+.hero {
+  img {
+    object-fit: contain;
+    object-position: 100% 100%;
   }
 }

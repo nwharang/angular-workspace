@@ -5,6 +5,8 @@ import { projectRoute } from './project.Router';
 import { memberRoute } from './member.Router';
 import { localizeRoute } from './localize.Router';
 import { taskRoute } from './task.router';
+import { productRoute } from './product.Router';
+productRoute
 export const appRouter = router({
   auth: authRoute,
   user: userRoute,
@@ -12,5 +14,6 @@ export const appRouter = router({
   member: memberRoute,
   localize: localizeRoute,
   task: taskRoute,
+  product: productRoute,
 });
 export type AppRouter = typeof appRouter;

@@ -60,7 +60,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'product-detail',
+    path: 'product-detail/:id',
     component: ProductDetailComponent,
     title: 'Product Detail Page - HeadPhone Store',
     data: {

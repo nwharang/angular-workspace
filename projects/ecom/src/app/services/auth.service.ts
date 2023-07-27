@@ -8,12 +8,9 @@ export class AuthService {
   isAuth: Promise<boolean>;
   localize = 'en';
   constructor() {
-    this.isAuth = trpc.auth.authenticate
-      .mutate()
-      .then(({ localize, authenticate }) => {
-        this.localize = localize;
-        return authenticate;
-      });
+    this.isAuth = trpc.auth.authenticate.mutate().then(({ authenticate }) => {
+      return authenticate;
+    });
   }
 
   authenticate() {}
