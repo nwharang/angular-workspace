@@ -8,42 +8,28 @@
                 <div class="card mb-3">
                     <div class="row g-3">
                         <div class="col-md-4">
-                            <img src="assets/images/headphone-home.webp" class="img-fluid rounded-start p-2" alt="...">
-                            <div class="d-flex justify-content-center">
-                                <img class="object-fit-fill border w-25 me-3 p-2"
-                                    src="assets/images/headphone-home.webp" alt="">
-                                <img class="object-fit-fill border w-25 me-3 p-2"
-                                    src="assets/images/headphone-home.webp" alt="">
-                                <img class="object-fit-fill border w-25 me-3 p-2"
-                                    src="assets/images/headphone-home.webp" alt="">
-                            </div>
-
+                            <img src="{{product?.image}}" class="img-fluid rounded-start p-2" alt="...">
                         </div>
                         <div class="col-md-8">
-                            <div class="card-body" *ngIf="let item as product">
+                            <div class="card-body">
                                 <h5 class="card-title">
-                                  <span class="badge bg-warning">New</span>
+                                    {{product?.name}}
+                                    <span class="badge bg-warning">New</span>
                                 </h5>
                                 <p class="card-text">
                                     <span class="text-body-secondary">Description:</span> <span
-                                        class="text-body-primary"> Lorem ipsum dolor sit amet consectetur adipisicing
-                                        elit. Quisquam, voluptatum.</span>
-                                </p>
-                                <p class="card-text">
-                                    <span class="text-body-secondary">Category:</span> <span class="text-body-primary">
-                                        Electronics</span>
+                                        class="text-body-primary">
+                                        {{product?.description}}
+                                    </span>
                                 </p>
                                 <p class="card-text">
                                     <span class="text-body-secondary">Brand:</span> <span class="text-body-primary">
-                                        Sony</span>
+                                        {{product?.unit}}</span>
                                 </p>
                                 <p class="card-text">
                                     <span class="text-body-secondary">Price:</span> <span class="text-body-primary"> $
-                                        100</span>
-                                </p>
-                                <p class="card-text">
-                                    <span class="text-body-secondary">Quantity:</span> <span class="text-body-primary">
-                                        10</span>
+                                        {{product?.price}}
+                                    </span>
                                 </p>
                                 <div>
                                     <button class="btn btn-warning me-2">Add to Cart</button>

@@ -51,6 +51,15 @@ const routes: Routes = [
     },
   },
   {
+    path: 'user',
+    component: AuthComponent,
+    title: 'User Page - HeadPhone Store',
+    data: {
+      title: 'User Page - HeadPhone Store',
+      description: 'This is the description of the User Page',
+    },
+  },
+  {
     path: 'cart',
     component: CartComponent,
     title: 'Cart Page - HeadPhone Store',

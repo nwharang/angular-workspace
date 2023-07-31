@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Product } from '@prisma/client';
 import { trpc } from '~app/src/trpcClient';
@@ -8,18 +8,22 @@ import { trpc } from '~app/src/trpcClient';
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.css'],
 })
-export class ProductDetailComponent implements OnInit {
+export class ProductDetailComponent {
   productId: string = '';
-  product: Product[] = [];
+  product: Product | null = null;
   constructor(private route: ActivatedRoute) {
     this.route.params.subscribe((params: Params) => {
       this.productId = params['id'];
+      this.load();
     });
   }
-  async ngOnInit(): Promise<void> {
-    this.product = (await trpc.product.get.query({
-      id: this.productId,
-    })) as unknown as Product[];
-    console.log(this.product);
+  async load(): Promise<void> {
+    trpc.product.get
+      .query({
+        id: this.productId,
+      })
+      .then((res) => {
+        this.product = res;
+      });
   }
 }

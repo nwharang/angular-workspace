@@ -5,13 +5,19 @@ import { trpc } from '~ecom/src/trpcClient';
   providedIn: 'root',
 })
 export class AuthService {
-  isAuth: Promise<boolean>;
-  localize = 'en';
+  isAuth: boolean = false;
   constructor() {
-    this.isAuth = trpc.auth.authenticate.mutate().then(({ authenticate }) => {
-      return authenticate;
+    trpc.auth.authenticate.mutate().then(({ authenticate }) => {
+      this.isAuth = authenticate;
     });
   }
 
-  authenticate() {}
+  authenticate() {
+    return this.isAuth;
+  }
+  logout() {
+    trpc.auth.logout.mutate().then(() => {
+      this.isAuth = false;
+    });
+  }
 }

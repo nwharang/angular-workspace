@@ -12,8 +12,7 @@
                     <a class="nav-link " [routerLink]="['/home']" routerLinkActive="active">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link " [routerLink]="['/products']" [queryParams]="{page : 1}"
-                        routerLinkActive="active">Shop</a>
+                    <a class="nav-link " [routerLink]="['/products']" routerLinkActive="active">Shop</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" [routerLink]="['/blog']" routerLinkActive="active">Blog</a>
@@ -26,11 +25,9 @@
                         (click)="showInput()"></i></button>
             </form>
             <div>
-                <button type="button" class="btn btn-outline-secondary ms-2" data-toggle="modal"
-                    data-target="#cartModal">
-                    <img class=" " src="assets/images/shopping_cart-rect.svg" alt="" style="width: 20px;"
-                        data-bs-toggle="offcanvas" data-bs-target="#cartModal" aria-controls="offcanvasRight">
-                </button>
+                <a [routerLink]="['/cart']" routerLinkActive="active" class="btn btn-outline-secondary ms-2" >
+                    <img class=" " src="assets/images/shopping_cart-rect.svg" alt="" style="width: 20px;">
+                </a>
 
             </div>
             <div>
@@ -53,5 +50,3 @@
         </div>
     </div>
 </nav>
-
-<app-cart></app-cart>

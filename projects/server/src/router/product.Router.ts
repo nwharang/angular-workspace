@@ -7,7 +7,11 @@ export const productRoute = router({
   list: publicProcedure
     .input(
       z.object({
-        page: z.string(),
+        page: z.number(),
+        filter: z.object({
+          string: z.string().nullable(),
+          sort: z.number().nullable(),
+        }),
       })
     )
     .query(({ ctx, input }) => {
@@ -22,5 +26,43 @@ export const productRoute = router({
     )
     .query(({ ctx, input }) => {
       return new ProductController().getProductById(ctx, input);
+    }),
+  
+  create: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        price: z.bigint(),
+        description: z.string(),
+        image: z.string(),
+        unit: z.string(),
+      })
+    )
+
+    .mutation(({ ctx, input }) => {
+      return new ProductController().createProduct(ctx, input);
+    }),
+  update: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        price: z.bigint(),
+        description: z.string(),
+        image: z.string(),
+        unit: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return new ProductController().updateProduct(ctx, input);
+    }),
+  delete: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return new ProductController().deleteProduct(ctx, input);
     }),
 });
