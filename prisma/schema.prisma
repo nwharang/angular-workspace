@@ -12,6 +12,11 @@ enum Localize {
   vi
 }
 
+enum Role {
+  admin
+  user
+}
+
 enum Status {
   Backlog
   InProgress
@@ -65,6 +70,7 @@ model User {
   updatedAt       DateTime         @updatedAt
   localize        Localize?        @default(en)
   member          Member[]
+  role            Role             @default(user)
   ShoppingSession ShoppingSession?
 }
 
@@ -76,8 +82,7 @@ model Member {
   projectId        String           @db.ObjectId
   InvitationStatus InvitationStatus @default(Pending)
   task             Task[]
-
-  owner Boolean @default(false)
+  owner            Boolean          @default(false)
 }
 
 model Product {
@@ -93,7 +98,7 @@ model Product {
 model CartItem {
   id                String          @id @default(auto()) @map("_id") @db.ObjectId
   qty               BigInt          @default(1)
-  ShoppingSession   ShoppingSession @relation(fields: [shoppingSessionId], references: [id])
+  ShoppingSession   ShoppingSession @relation(fields: [shoppingSessionId], references: [id], onDelete: Cascade)
   shoppingSessionId String          @db.ObjectId
   Product           Product         @relation(fields: [productId], references: [id])
   productId         String          @unique @db.ObjectId
@@ -102,19 +107,18 @@ model CartItem {
 model ShoppingSession {
   id       String     @id @default(auto()) @map("_id") @db.ObjectId
   total    BigInt     @default(0)
-  User     User       @relation(fields: [userId], references: [id])
+  User     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String     @unique @db.ObjectId
-  Order    Order?      @relation(fields: [orderId], references: [id])
-  orderId  String?     @unique @db.ObjectId
+  Order    Order?     @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  orderId  String?    @unique @db.ObjectId
   CartItem CartItem[]
 }
 
 model Order {
   id              String           @id @default(auto()) @map("_id") @db.ObjectId
   status          OrderStatus      @default(InProgress)
-  total           BigInt
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  address         String
+  address         String?
   ShoppingSession ShoppingSession?
 }

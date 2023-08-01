@@ -15,6 +15,4 @@ export class AuthService {
         return authenticate;
       });
   }
-
-  authenticate() {}
 }

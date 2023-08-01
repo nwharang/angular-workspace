@@ -11,6 +11,7 @@ import { trpc } from '~app/src/trpcClient';
       (dataInput)="login($event)"
       (dataRegister)="register($event)"
     />
+    <app-cart *ngIf="isLogin"></app-cart>
   `,
 })
 export class AuthComponent {
@@ -20,10 +21,9 @@ export class AuthComponent {
   constructor(private router: Router, private authService: AuthService) {
     this.authService.isAuth.then((res) => {
       this.isLogin = res;
-      console.log(this.isLogin);
     });
     if (this.isLogin) {
-      this.router.navigate(['/home']);
+      window.location.href = '/home';
     }
   }
 
@@ -35,7 +35,7 @@ export class AuthComponent {
       })
       .then((res) => {
         if (res) {
-          this.router.navigate(['/home']);
+      window.location.href = '/home';
         }
       });
   }

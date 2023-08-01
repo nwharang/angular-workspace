@@ -50,6 +50,7 @@ export const authRoute = router({
       return {
         localize: checkUser.localize || Localize.en,
         authenticate: true,
+        isAdmin: checkUser.role == 'admin',
       };
     return {
       localize: Localize.en,

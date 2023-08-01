@@ -1,19 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-var */
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
+import { Router } from '@angular/router';
+import { trpc } from '~app/src/trpcClient';
 import { AuthService } from '~ecom/src/app/services/auth.service';
 
-declare var bootstrap: any;
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   nav = false;
-  input: boolean = true;
-  isLogin: boolean = false;
-  showCartModal: boolean = false;
+  input = true;
+  isLogin = false;
+  isAdmin = false;
   @HostListener('window:scroll', ['$event'])
   onWindowScroll() {
     if (window.scrollY > 280) {
@@ -23,27 +22,20 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  constructor(private authService: AuthService) {
-    this.isLogin = this.authService.isAuth;
-    this.showCartModal = false;
+  constructor(private authService: AuthService, private router: Router) {
+    this.authService.isAuth.then((res) => {
+      this.isLogin = res;
+      this.isAdmin = this.authService.isAdmin;
+    });
   }
 
-  ngOnInit(): void {}
   showInput() {
     this.input = !this.input;
   }
 
   logout() {
-    this.authService.logout();
-  }
-  showCart(id: string) {
-    const eleModal = document.getElementById(id);
-    if (eleModal) {
-      let myModal = bootstrap.Modal.getInstance(eleModal);
-      if (!myModal) {
-        myModal = new bootstrap.Modal(eleModal, {});
-      }
-      myModal.show();
-    }
+    trpc.auth.logout.mutate().then(() => {
+      location.href = "/"
+    });
   }
 }

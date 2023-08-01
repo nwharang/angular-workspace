@@ -1,3 +1,4 @@
+import { ShoppingSession } from '@prisma/client';
 import { authContext } from '~server/Middleware/Auth.Middleware';
 
 export default class CartController {
@@ -21,71 +22,85 @@ export default class CartController {
     ctx: authContext,
     input: { productId: string; quantity: number }
   ) {
-    if (!ctx.user) {
-      throw new Error('User not found');
-    }
-    const shoppingSession = await ctx.prisma.shoppingSession.findMany({
+    console.log(ctx.user.id);
+    const shoppingSession = (await ctx.prisma.user.findUnique({
       where: {
-        userId: ctx.user?.id,
+        id: ctx.user.id,
       },
-    });
-    if (shoppingSession.length === 0) {
-      const cart = await ctx.prisma.user.update({
-        where: {
-          id: ctx.user?.id,
+      select: {
+        ShoppingSession: true,
+      },
+    })) as unknown as ShoppingSession;
+    if (!shoppingSession) {
+      await ctx.prisma.shoppingSession.create({
+        include: {
+          CartItem: true,
         },
         data: {
-          ShoppingSession: {
-            upsert: {
-              create: {
-                CartItem: {
-                  create: {
-                    qty: input.quantity,
-                    productId: input.productId,
-                  },
-                },
-              },
-              update: {
-                CartItem: {
-                  create: {
-                    qty: input.quantity,
-                    productId: input.productId,
-                  },
+          userId: ctx.user.id,
+          CartItem: {
+            create: {
+              qty: input.quantity,
+              Product: {
+                connect: {
+                  id: input.productId,
                 },
               },
             },
           },
         },
-      })
-      return cart;
+      });
+    } else {
+      await ctx.prisma.shoppingSession.update({
+        where: {
+          userId: ctx.user.id,
+        },
+        include: {
+          CartItem: true,
+        },
+        data: {
+          CartItem: {
+            upsert: {
+              where: {
+                productId: input.productId,
+              },
+              create: {
+                qty: 1,
+                productId: input.productId,
+              },
+              update: {
+                qty: {
+                  increment: 1,
+                },
+              },
+            },
+          },
+        },
+      });
     }
-      // else {
-      //   const shoppingSessionId = shoppingSession[0].id;
-      //   const update = {
-          
-      //   }
-      //   this.updateQty(ctx, { input.productId, quantity, shoppingSessionId });
-        
-
-      // }
-    return shoppingSession;
+    return;
   }
 
   async updateQty(
     ctx: authContext,
     input: { productId: string; quantity: number; shoppingSessionId: string }
   ) {
-    const cart = await ctx.prisma.cartItem.update({
+    const cart = await ctx.prisma.cartItem.upsert({
       where: {
         productId: input.productId,
-        shoppingSessionId: input.shoppingSessionId,
       },
-      data: {
+      update: {
         qty: input.quantity,
+      },
+      create: {
+        qty: input.quantity,
+        productId: input.productId,
+        shoppingSessionId: input.shoppingSessionId,
       },
     });
     return cart;
   }
+
   async deleteItem(
     ctx: authContext,
     input: { productId: string; shoppingSessionId: string }
@@ -99,13 +114,64 @@ export default class CartController {
     return cart;
   }
 
-  updateTotalPrice(ctx: authContext) {
-    const cart = ctx.prisma.cartItem.findMany({
+  async removeCartitem(ctx: authContext, input: { shoppingSessionId: string }) {
+    const cart = await ctx.prisma.cartItem.deleteMany({
       where: {
-        shoppingSessionId: ctx.user?.id,
+        shoppingSessionId: input.shoppingSessionId,
       },
     });
     return cart;
   }
 
+  async checkout(
+    ctx: authContext,
+    input: { shoppingSessionId: string; address: string }
+  ) {
+    // goi len server tao order
+    const session = await ctx.prisma.shoppingSession.findUnique({
+      where: {
+        id: input.shoppingSessionId,
+      },
+      include: {
+        CartItem: {
+          include: {
+            Product: true,
+          },
+        },
+      },
+    });
+    if (!session) return;
+    console.log('nosession' + session);
+
+    const total = session.CartItem.map((e) => e.Product.price * e.qty).reduce(
+      (a, b) => a + b
+    );
+    return await ctx.prisma.order.create({
+      data: {
+        address: input.address,
+        ShoppingSession: {
+          connect: {
+            id: input.shoppingSessionId,
+            total,
+          },
+        },
+      },
+    });
+  }
+
+  async getListOrders(ctx: authContext) {
+    return await ctx.prisma.order.findMany({
+      include: {
+        ShoppingSession: {
+          include: {
+            CartItem: {
+              include: {
+                Product: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }

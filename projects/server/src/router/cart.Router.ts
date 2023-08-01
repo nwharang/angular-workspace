@@ -43,4 +43,31 @@ export const cartRoute = router({
     .mutation(({ ctx, input }) => {
       return new CartController().deleteItem(ctx, input);
     }),
+
+  checkout: publicProcedure
+    .use(AuthMiddleware)
+    .input(
+      z.object({
+        shoppingSessionId: z.string(),
+        address: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return new CartController().checkout(ctx, input);
+    }),
+
+  removeCart: publicProcedure
+    .use(AuthMiddleware)
+    .input(
+      z.object({
+        shoppingSessionId: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return new CartController().removeCartitem(ctx, input);
+    }),
+
+  getListOrders: publicProcedure.use(AuthMiddleware).query(({ ctx }) => {
+    return new CartController().getListOrders(ctx);
+  }),
 });

@@ -32,4 +32,7 @@ export default class UserController {
     }
     throw new TRPCError({ code: 'BAD_REQUEST' });
   }
+  getUserInfo(ctx: authContext) {
+    return ctx.user;
+  }
 }

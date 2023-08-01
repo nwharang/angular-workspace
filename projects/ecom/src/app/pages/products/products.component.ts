@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Product } from '@prisma/client';
 import { trpc } from '~ecom/src/trpcClient';
-import { CartService } from '../../services/cart.service';
 
 type TData = {
   allItem: number;
@@ -122,7 +121,6 @@ export class ProductsComponent {
   };
   constructor(
     private routerActive: ActivatedRoute,
-    private cartService: CartService
   ) {
     this.load();
   }
@@ -153,6 +151,6 @@ export class ProductsComponent {
   }
 
   async addToCart(id: string) {
-    this.cartService.addToCart(id);
+    await trpc.cart.addToCart.mutate({ productId: id , quantity: 1});
   }
 }

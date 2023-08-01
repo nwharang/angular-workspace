@@ -5,19 +5,18 @@ import { trpc } from '~ecom/src/trpcClient';
   providedIn: 'root',
 })
 export class AuthService {
-  isAuth: boolean = false;
+  isAuth: Promise<boolean>;
+  isAdmin = false;
   constructor() {
-    trpc.auth.authenticate.mutate().then(({ authenticate }) => {
-      this.isAuth = authenticate;
-    });
+    this.isAuth = trpc.auth.authenticate
+      .mutate()
+      .then(({ authenticate, isAdmin }) => {
+        this.isAdmin = isAdmin || false;
+        return authenticate;
+      });
   }
 
   authenticate() {
     return this.isAuth;
-  }
-  logout() {
-    trpc.auth.logout.mutate().then(() => {
-      this.isAuth = false;
-    });
   }
 }

@@ -15,4 +15,7 @@ export const userRoute = router({
     .mutation(({ ctx, input }) => {
       return new UserController().changeLocalization(ctx, input);
     }),
+  getUserInfo: publicProcedure.use(AuthMiddleware).query(({ ctx }) => {
+    return new UserController().getUserInfo(ctx);
+  }),
 });

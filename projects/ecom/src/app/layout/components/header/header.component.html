@@ -44,8 +44,11 @@
                     </svg>
                 </button>
             </div>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="isLogin && isAdmin">
                 <a class="nav-link" [routerLink]="['/admin']" routerLinkActive="active">Admin</a>
+            </li>
+            <li class="nav-item" *ngIf="isLogin">
+                <button class="nav-link" (click)="logout()">Logout</button>
             </li>
         </div>
     </div>
