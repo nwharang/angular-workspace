@@ -61,17 +61,17 @@ model Project {
 }
 
 model User {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
   name            String?
-  email           String           @unique
+  email           String            @unique
   photo           String?
   password        String
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  localize        Localize?        @default(en)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  localize        Localize?         @default(en)
   member          Member[]
-  role            Role             @default(user)
-  ShoppingSession ShoppingSession?
+  role            Role              @default(user)
+  ShoppingSession ShoppingSession[]
 }
 
 model Member {
@@ -86,13 +86,13 @@ model Member {
 }
 
 model Product {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   price       BigInt
   image       String?
   description String?
   unit        String
-  CartItem    CartItem?
+  CartItem    CartItem[]
 }
 
 model CartItem {
@@ -101,7 +101,9 @@ model CartItem {
   ShoppingSession   ShoppingSession @relation(fields: [shoppingSessionId], references: [id], onDelete: Cascade)
   shoppingSessionId String          @db.ObjectId
   Product           Product         @relation(fields: [productId], references: [id])
-  productId         String          @unique @db.ObjectId
+  productId         String          @db.ObjectId
+
+  @@unique([shoppingSessionId, productId])
 }
 
 model ShoppingSession {
@@ -109,16 +111,16 @@ model ShoppingSession {
   total    BigInt     @default(0)
   User     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId   String     @unique @db.ObjectId
-  Order    Order?     @relation(fields: [orderId], references: [id], onDelete: SetNull)
-  orderId  String?    @unique @db.ObjectId
   CartItem CartItem[]
+  Order    Order?
 }
 
 model Order {
-  id              String           @id @default(auto()) @map("_id") @db.ObjectId
-  status          OrderStatus      @default(InProgress)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  address         String?
-  ShoppingSession ShoppingSession?
+  id                String           @id @default(auto()) @map("_id") @db.ObjectId
+  status            OrderStatus      @default(InProgress)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  address           String?
+  ShoppingSession   ShoppingSession? @relation(fields: [shoppingSessionId], references: [id])
+  shoppingSessionId String?          @unique @db.ObjectId
 }

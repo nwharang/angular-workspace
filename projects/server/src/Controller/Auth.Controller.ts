@@ -42,10 +42,7 @@ export default class AuthController {
   /**
    * Register User
    */
-  async register(
-    ctx: Context,
-    input: { email: string; password: string }
-  ) {
+  async register(ctx: Context, input: { email: string; password: string }) {
     let user = await ctx.prisma.user.findUnique({
       where: {
         email: input.email,
@@ -60,7 +57,11 @@ export default class AuthController {
     user = (await ctx.prisma.user.create({
       data: {
         email: input.email,
-        password: hashedPassword
+        password: hashedPassword,
+        ShoppingSession: {
+          create: {
+          },
+        },
       },
     })) as unknown as User;
     const access_token = jwt.sign({ id: user.id, email: user.email }, TOKENKEY);
@@ -81,5 +82,4 @@ export default class AuthController {
     });
     return;
   }
-  
 }

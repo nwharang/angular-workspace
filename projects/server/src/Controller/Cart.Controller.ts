@@ -22,51 +22,54 @@ export default class CartController {
     ctx: authContext,
     input: { productId: string; quantity: number }
   ) {
-    console.log(ctx.user.id);
-    const shoppingSession = (await ctx.prisma.user.findUnique({
+    let session = await ctx.prisma.shoppingSession.findUnique({
       where: {
-        id: ctx.user.id,
+        userId: ctx.user.id,
       },
-      select: {
-        ShoppingSession: true,
-      },
-    })) as unknown as ShoppingSession;
-    if (!shoppingSession) {
+    });
+    if (!session)
       await ctx.prisma.shoppingSession.create({
         include: {
-          CartItem: true,
+          CartItem: {
+            include: {
+              Product: true,
+            },
+          },
         },
         data: {
           userId: ctx.user.id,
           CartItem: {
             create: {
-              qty: input.quantity,
-              Product: {
-                connect: {
-                  id: input.productId,
-                },
-              },
+              productId: input.productId,
+              qty: 1,
             },
           },
         },
       });
-    } else {
+    else
       await ctx.prisma.shoppingSession.update({
         where: {
-          userId: ctx.user.id,
+          id: session.id,
         },
         include: {
-          CartItem: true,
+          CartItem: {
+            include: {
+              Product: true,
+            },
+          },
         },
         data: {
           CartItem: {
             upsert: {
               where: {
-                productId: input.productId,
+                shoppingSessionId_productId: {
+                  shoppingSessionId: session.id,
+                  productId: input.productId,
+                },
               },
               create: {
-                qty: 1,
                 productId: input.productId,
+                qty: 1,
               },
               update: {
                 qty: {
@@ -77,8 +80,6 @@ export default class CartController {
           },
         },
       });
-    }
-    return;
   }
 
   async updateQty(
@@ -87,7 +88,10 @@ export default class CartController {
   ) {
     const cart = await ctx.prisma.cartItem.upsert({
       where: {
-        productId: input.productId,
+        shoppingSessionId_productId: {
+          productId: input.productId,
+          shoppingSessionId: input.shoppingSessionId,
+        },
       },
       update: {
         qty: input.quantity,
@@ -105,10 +109,9 @@ export default class CartController {
     ctx: authContext,
     input: { productId: string; shoppingSessionId: string }
   ) {
-    const cart = await ctx.prisma.cartItem.deleteMany({
+    const cart = await ctx.prisma.cartItem.delete({
       where: {
-        productId: input.productId,
-        shoppingSessionId: input.shoppingSessionId,
+        shoppingSessionId_productId: input,
       },
     });
     return cart;
@@ -141,20 +144,17 @@ export default class CartController {
       },
     });
     if (!session) return;
-    console.log('nosession' + session);
 
     const total = session.CartItem.map((e) => e.Product.price * e.qty).reduce(
       (a, b) => a + b
     );
     return await ctx.prisma.order.create({
+      include: {
+        ShoppingSession: true,
+      },
       data: {
         address: input.address,
-        ShoppingSession: {
-          connect: {
-            id: input.shoppingSessionId,
-            total,
-          },
-        },
+        shoppingSessionId: session.id,
       },
     });
   }
