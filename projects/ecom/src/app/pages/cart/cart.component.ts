@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { Prisma, ShoppingSession } from '@prisma/client';
 import { trpc } from '~app/src/trpcClient';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+declare let bootstrap: any;
 const CartItemWithProduct = Prisma.validator<Prisma.CartItemArgs>()({
   include: { Product: true },
 });
@@ -22,7 +24,11 @@ type Cart = Prisma.CartItemGetPayload<typeof CartItemWithProduct>;
                 <th scope="col">Price</th>
                 <th scope="col">Qty</th>
                 <th scope="col">Total</th>
-                <th scope="col">Actions</th>
+                <th scope="col">
+                  <button class="btn btn-danger btn-sm" (click)="clearCart()">
+                    <i class="fa fa-times"></i>
+                  </button>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -145,8 +151,7 @@ type Cart = Prisma.CartItemGetPayload<typeof CartItemWithProduct>;
                     class="form-control"
                     #address
                     name="address"
-                  >
-                  </textarea>
+                  ></textarea>
                 </div>
                 <div>
                   <button
@@ -161,7 +166,39 @@ type Cart = Prisma.CartItemGetPayload<typeof CartItemWithProduct>;
           </div>
         </div>
       </div>
+
+      <!-- products card  -->
     </section>
+    <div
+      id="liveToastBtn"
+      class="toast-container position-fixed  top-50 end-0  p-3"
+      style="bg-bs-opacity: 1"
+    >
+      <div
+        id="liveToast"
+        class="toast align-items-center text-dark bg-light border rournded-4 "
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div
+          class="toast-header bg-warning  text-dark"
+          style="bg-bs-opacity: 1;"
+        >
+          <strong class="me-auto" style="color: #521a4d;">BangDang</strong>
+          <small>Notification </small>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="toast-body  bg-light">
+          {{ message }}
+        </div>
+      </div>
+    </div>
   `,
   styleUrls: ['./cart.component.scss'],
 })
@@ -182,6 +219,10 @@ export class CartComponent {
       res.map((item) => {
         this.shoppingSessionId = item.id;
         this.cartItem = item.CartItem;
+        this.total = item.CartItem.reduce(
+          (total, item) => total + Number(item.Product.price * item.qty),
+          0
+        );
       });
     });
     await trpc.user.info.query().then((res) => {
@@ -190,11 +231,24 @@ export class CartComponent {
     this.Checkout = false;
   }
   async updateQty(productId: string, qty: string) {
-    await trpc.cart.updateQty.mutate({
-      productId: productId,
-      quantity: Number(qty),
-      shoppingSessionId: this.shoppingSessionId,
-    });
+    if (Number(qty) <= 0) {
+      this.deleteItem(productId);
+      return;
+    }
+    await trpc.cart.updateQty
+      .mutate({
+        productId: productId,
+        quantity: Number(qty),
+        shoppingSessionId: this.shoppingSessionId,
+      })
+      .then(() => {
+        this.message = 'Item updated successfully';
+        this.openToast();
+      })
+      .catch((err) => {
+        this.message = err.message;
+        this.openToast();
+      });
     this.load();
   }
   async deleteItem(productId: string) {
@@ -205,6 +259,7 @@ export class CartComponent {
       })
       .then(() => {
         this.message = 'Item deleted successfully';
+        this.openToast();
       })
       .catch((err) => {
         this.message = err.message;
@@ -224,16 +279,35 @@ export class CartComponent {
       })
       .then(() => {
         this.message = 'Order sent successfully';
+        this.openToast();
       })
       .catch((err) => {
         this.message = err.message;
+        this.openToast();
       });
   }
 
   async clearCart() {
-    await trpc.cart.removeCart.mutate({
-      shoppingSessionId: this.shoppingSessionId,
-    });
+    await trpc.cart.removeCart
+      .mutate({
+        shoppingSessionId: this.shoppingSessionId,
+      })
+      .then(() => {
+        this.message = 'Cart cleared successfully';
+        this.openToast();
+      })
+      .catch((err) => {
+        this.message = err.message;
+        this.openToast();
+      });
+
     this.load();
+  }
+  openToast() {
+    const myToast = new bootstrap.Toast(
+      document.getElementById('liveToast') as HTMLElement,
+      {}
+    );
+    myToast.show();
   }
 }

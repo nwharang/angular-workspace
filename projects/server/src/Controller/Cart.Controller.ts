@@ -1,4 +1,4 @@
-import { ShoppingSession } from '@prisma/client';
+import { OrderStatus } from '@prisma/client';
 import { authContext } from '~server/Middleware/Auth.Middleware';
 
 export default class CartController {
@@ -171,6 +171,20 @@ export default class CartController {
             },
           },
         },
+      },
+    });
+  }
+  async updateOrderStatus(
+    ctx: authContext,
+    input: { orderId: string; status: OrderStatus }
+  ) {
+    return await ctx.prisma.order.update({
+      where: {
+        id: input.orderId,
+      },
+      data: {
+        status: input.status,
+        updatedAt: new Date(),
       },
     });
   }

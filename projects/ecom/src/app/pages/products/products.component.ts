@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Product } from '@prisma/client';
 import { trpc } from '~ecom/src/trpcClient';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+declare let bootstrap: any;
 
 type TData = {
   allItem: number;
@@ -93,6 +95,38 @@ type TData = {
             </div>
           </div>
           <!-- products card  -->
+          <div
+            id="liveToastBtn"
+            class="toast-container position-fixed  top-50 end-0 p-3"
+            style="bg-bs-opacity: 1"
+          >
+            <div
+              id="liveToast"
+              class="toast align-items-center text-dark bg-light border rournded-4 "
+              role="alert"
+              aria-live="assertive"
+              aria-atomic="true"
+            >
+              <div
+                class="toast-header bg-warning  text-dark"
+                style="bg-bs-opacity: 1;"
+              >
+                <strong class="me-auto" style="color: #521a4d;"
+                  >BangDang</strong
+                >
+                <small>Notification </small>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="toast"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="toast-body  bg-light">
+                {{ message }}
+              </div>
+            </div>
+          </div>
         </div>
         <ngb-pagination
           *ngIf="data"
@@ -107,6 +141,7 @@ type TData = {
   styleUrls: ['./products.component.scss'],
 })
 export class ProductsComponent {
+  message: string = 'Hello ';
   title = 'Products';
   depception = 'This is the products page';
   productList: Product[] = [];
@@ -119,9 +154,7 @@ export class ProductsComponent {
     string: null,
     sort: null,
   };
-  constructor(
-    private routerActive: ActivatedRoute,
-  ) {
+  constructor(private routerActive: ActivatedRoute) {
     this.load();
   }
   async load(): Promise<void> {
@@ -151,6 +184,18 @@ export class ProductsComponent {
   }
 
   async addToCart(id: string) {
-    await trpc.cart.addToCart.mutate({ productId: id , quantity: 1});
+    await trpc.cart.addToCart
+      .mutate({ productId: id, quantity: 1 })
+      .then(() => {
+        this.message = 'Add to cart success';
+        this.openToast();
+      });
+  }
+  openToast() {
+    const myToast = new bootstrap.Toast(
+      document.getElementById('liveToast') as HTMLElement,
+      {}
+    );
+    myToast.show();
   }
 }

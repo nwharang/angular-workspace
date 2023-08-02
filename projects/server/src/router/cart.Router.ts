@@ -1,3 +1,4 @@
+import { OrderStatus } from '@prisma/client';
 import { z } from 'zod';
 import CartController from '~server/Controller/Cart.Controller';
 import { AuthMiddleware } from '~server/Middleware/Auth.Middleware';
@@ -70,4 +71,17 @@ export const cartRoute = router({
   getListOrders: publicProcedure.use(AuthMiddleware).query(({ ctx }) => {
     return new CartController().getListOrders(ctx);
   }),
+
+  updateOrderStatus: publicProcedure
+    .use(AuthMiddleware)
+
+    .input(
+      z.object({
+        orderId: z.string(),
+        status: z.nativeEnum(OrderStatus),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return new CartController().updateOrderStatus(ctx, input);
+    }),
 });

@@ -27,6 +27,11 @@ $color: purple;
     background-color: $color;
 }
 
+.toast-container{
+  #liveToast{
+    background-color: #521a4d;
+  }
 
+}
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';

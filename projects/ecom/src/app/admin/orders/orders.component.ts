@@ -31,9 +31,9 @@ declare var bootstrap: any;
           <thead>
             <tr>
               <th scope="col">STT</th>
+              <th scope="col">ID</th>
               <th scope="col">Create At</th>
               <th scope="col">Address</th>
-              <th scope="col">Total</th>
               <th scope="col">Status</th>
               <th scope="col">Action</th>
             </tr>
@@ -41,12 +41,14 @@ declare var bootstrap: any;
           <tbody>
             <tr *ngFor="let item of orderItems; let i = index">
               <th scope="row">{{ i + 1 }}</th>
-              <td>{{ item.address }}</td>
+              <td>{{ item.id }}$</td>
               <td>{{ item.createdAt | date : 'dd/MM/yyyy' }}</td>
-              <td>{{ item.total }}$</td>
+              <td>{{ item.address }}</td>
               <td>{{ item.status }}</td>
-              <td>
-                <button (click)="getDetail(item)">detail</button>
+              <td class="d-flex">
+                <button class="btn btn-warning" (click)="getDetail(item)">
+                  Detail
+                </button>
                 <button class="btn btn-danger">Delete</button>
               </td>
             </tr>
@@ -62,10 +64,10 @@ declare var bootstrap: any;
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-xl">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Modal Details</h5>
+            <h5 class="modal-title text-dark">Modal Details</h5>
             <button
               type="button"
               class="btn-close"
@@ -75,11 +77,10 @@ declare var bootstrap: any;
           </div>
           <div class="modal-body">
             <div
-              class="row rows-col-md-2 rows-col-sm-1 rows-col-sx-1 gap-3 bg-light-subtle border rounded-5"
+              class="row rows-col-md-2 rows-col-sm-1 rows-col-sx-1 gap-1 bg-light-subtle "
             >
               <div class="col-md-12 col-sm-12 col-lg-8 h-100">
                 <div class="p-4 text-dark">
-                  <h5 class="text-center py-2  ">Cart</h5>
                   <table class="table table-light p-4 border">
                     <thead>
                       <tr>
@@ -117,25 +118,49 @@ declare var bootstrap: any;
               </div>
 
               <div class="col h-100">
-                <div class="p-4 text-dark">
-                  <div class="" *ngFor="let item of orderDetail">
-                    <h5 class="text-center py-2 ">Info Customers</h5>
-                    <div class="border-top-0 d-flex justify-content-between">
-                      <h5>
-                        Total:
-                        <span class="price text-success"> Tong cong o day</span>
-                      </h5>
-                      <span class="badge bg-primary"></span>
+                <div>
+                  <div class="text-dark">
+                    <div class="">
+                      <h5 class="text-center py-2 ">Info Customers</h5>
+                      <div
+                        class="border-top-0 d-flex flex-column justify-content-between"
+                      >
+                        <p>
+                          <span for="address" class="fw-bold">Total: </span
+                          >{{ orderDetail.total }}$
+                        </p>
+                        <p>
+                          <span for="address" class="fw-bold">Status: </span>
+                          <select name="" id="">
+                            <option
+                              *ngFor="let item of orderStatus"
+                              [value]="item"
+                              [selected]="item === orderDetail.status"
+                              (change)="updateOrderStatus(item)"
+                              (click)="updateOrderStatus(item)"
+                            >
+                              {{ item }}
+                            </option>
+                          </select>
+                        </p>
+                        <p>
+                          <span for="address" class="fw-bold">Address:</span>
+                          {{ orderDetail.address }}
+                        </p>
+                        <p>
+                          <span for="address" class="fw-bold">Create at: </span>
+                          {{ orderDetail.createdAt | date : 'dd/MM/yyyy' }}
+                        </p>
+                        <p>
+                          <span for="address" class="fw-bold"
+                            >Last updated:</span
+                          >
+                          {{ orderDetail.updatedAt | date : 'dd/MM/yyyy' }}
+                        </p>
+                      </div>
                     </div>
+                    <div class="mb-3"></div>
                   </div>
-                  <form>
-                    <div class="mb-3">
-                      <label for="address" class="form-label">Address</label>
-                    </div>
-                    <div>
-                      <button class="btn btn-warning">Send Order</button>
-                    </div>
-                  </form>
                 </div>
               </div>
             </div>
@@ -157,8 +182,22 @@ declare var bootstrap: any;
 })
 export class OrdersComponent {
   orderItems: any[] = [];
-  orderDetail: Cart[] = [];
-
+  message: string = '';
+  orderDetail: {
+    id: string;
+    createdAt: Date;
+    address: string;
+    total: number;
+    status: string;
+    updatedAt: Date;
+  } = {
+    id: '',
+    createdAt: new Date(),
+    address: '',
+    total: 0,
+    status: '',
+    updatedAt: new Date(),
+  };
   cartItemsDetail: CartItemArgs[] = [];
   orderStatus: OrderStatus[] = ['InProgress', 'Completed', 'Canceled'];
   constructor() {
@@ -178,14 +217,33 @@ export class OrdersComponent {
   }
 
   getDetail(item: Cart) {
-    console.log(item);
-    this.orderDetail = item.ShoppingSession as unknown as Cart[];
-    this.openModal();
+    this.orderDetail = item as any;
     console.log(this.orderDetail);
+    this.cartItemsDetail = item.ShoppingSession!.CartItem;
+    this.orderDetail.total = this.cartItemsDetail.reduce(
+      (a, b) => a + Number(b.qty * b.Product.price),
+      0
+    );
+    this.openModal();
   }
-
   openModal() {
     const myModal = new bootstrap.Modal(document.getElementById('modalDetail'));
     myModal.show();
+  }
+
+  closeModal() {
+    const myModal = new bootstrap.Modal(document.getElementById('modalDetail'));
+    myModal.hide();
+  }
+  updateOrderStatus(status: string) {
+    trpc.cart.updateOrderStatus
+      .mutate({
+        orderId: this.orderDetail.id,
+        status: status as OrderStatus,
+      })
+      .then(() => {
+        this.closeModal();
+        this.message = 'Update status success';
+      });
   }
 }
