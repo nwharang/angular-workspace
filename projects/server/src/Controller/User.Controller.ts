@@ -32,7 +32,22 @@ export default class UserController {
     }
     throw new TRPCError({ code: 'BAD_REQUEST' });
   }
-  getUserInfo(ctx: authContext) {
-    return ctx.user;
+
+  async getUserbyId(ctx: authContext, input: { id: string }) {
+    const user = await ctx.prisma.user.findUnique({
+      where: {
+        id: input.id,
+      },
+    });
+    if (user) {
+      return {
+        ...(({ name, email, photo }) => ({
+          name,
+          email,
+          photo,
+        }))(user),
+      };
+    }
+    throw new TRPCError({ code: 'BAD_REQUEST' });
   }
 }

@@ -310,4 +310,5 @@ export class CartComponent {
     );
     myToast.show();
   }
+
 }

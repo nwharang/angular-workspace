@@ -144,10 +144,6 @@ export default class CartController {
       },
     });
     if (!session) return;
-
-    const total = session.CartItem.map((e) => e.Product.price * e.qty).reduce(
-      (a, b) => a + b
-    );
     return await ctx.prisma.order.create({
       include: {
         ShoppingSession: true,
@@ -188,4 +184,14 @@ export default class CartController {
       },
     });
   }
+
+  async deleteOrder(ctx: authContext, input: { orderId: string }) {
+    return await ctx.prisma.order.delete({
+      where: {
+        id: input.orderId,
+      },
+    });
+  }
+
+
 }

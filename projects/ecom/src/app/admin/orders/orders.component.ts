@@ -1,7 +1,6 @@
 /* eslint-disable no-var */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component } from '@angular/core';
-import { NgForm } from '@angular/forms';
 import { OrderStatus, Prisma } from '@prisma/client';
 import { trpc } from '~app/src/trpcClient';
 const CartItemWithProduct = Prisma.validator<Prisma.OrderArgs>()({
@@ -41,7 +40,7 @@ declare var bootstrap: any;
           <tbody>
             <tr *ngFor="let item of orderItems; let i = index">
               <th scope="row">{{ i + 1 }}</th>
-              <td>{{ item.id }}$</td>
+              <td>{{ item.id }}</td>
               <td>{{ item.createdAt | date : 'dd/MM/yyyy' }}</td>
               <td>{{ item.address }}</td>
               <td>{{ item.status }}</td>
@@ -49,7 +48,9 @@ declare var bootstrap: any;
                 <button class="btn btn-warning" (click)="getDetail(item)">
                   Detail
                 </button>
-                <button class="btn btn-danger">Delete</button>
+                <button class="btn btn-danger" (click)="deleteOrder(item.id)">
+                  Delete
+                </button>
               </td>
             </tr>
           </tbody>
@@ -126,6 +127,14 @@ declare var bootstrap: any;
                         class="border-top-0 d-flex flex-column justify-content-between"
                       >
                         <p>
+                          <span for="address" class="fw-bold">Name: </span>
+                          {{ infoCustomer?.name }}
+                        </p>
+                        <p>
+                          <span for="address" class="fw-bold">Email: </span>
+                          {{ infoCustomer?.email }}
+                        </p>
+                        <p>
                           <span for="address" class="fw-bold">Total: </span
                           >{{ orderDetail.total }}$
                         </p>
@@ -169,18 +178,45 @@ declare var bootstrap: any;
             <button
               type="button"
               class="btn btn-secondary"
-              data-bs-dismiss="modal"
+              (click)="closeModal()"
             >
               Close
             </button>
-            <button type="button" class="btn btn-primary">Save changes</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="toast-container position-fixed bottom-0 end-0 p-3"
+      style="--bs-bg-opacity:1"
+    >
+      <div
+        id="liveToast"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+      >
+        <div class="toast-header  text-dark">
+          <strong class="me-auto">BangDang</strong>
+          <small>Notification </small>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="toast-body  bg-dark">
+          {{ message }}
         </div>
       </div>
     </div>
   `,
 })
 export class OrdersComponent {
+  infoCustomer: any | null = null;
   orderItems: any[] = [];
   message: string = '';
   orderDetail: {
@@ -206,19 +242,16 @@ export class OrdersComponent {
 
   async load() {
     await trpc.cart.getListOrders.query().then((res) => {
-      res.map((item) => {
-        this.orderItems.push(item);
-      });
+      this.orderItems = res as any;
     });
-    console.log(this.orderItems);
-  }
-  onSubmit(frm: NgForm) {
-    console.log(frm);
   }
 
   getDetail(item: Cart) {
     this.orderDetail = item as any;
     console.log(this.orderDetail);
+    this.getUserById(item.ShoppingSession!.userId)
+    console.log(this.infoCustomer);
+    
     this.cartItemsDetail = item.ShoppingSession!.CartItem;
     this.orderDetail.total = this.cartItemsDetail.reduce(
       (a, b) => a + Number(b.qty * b.Product.price),
@@ -232,8 +265,14 @@ export class OrdersComponent {
   }
 
   closeModal() {
-    const myModal = new bootstrap.Modal(document.getElementById('modalDetail'));
-    myModal.hide();
+    const eleModal = document.getElementById('modalDetail');
+    if (eleModal) {
+      let myModal = bootstrap.Modal.getInstance(eleModal);
+      if (!myModal) {
+        myModal = new bootstrap.Modal(eleModal, {});
+      }
+      myModal.toggle();
+    }
   }
   updateOrderStatus(status: string) {
     trpc.cart.updateOrderStatus
@@ -242,8 +281,36 @@ export class OrdersComponent {
         status: status as OrderStatus,
       })
       .then(() => {
-        this.closeModal();
         this.message = 'Update status success';
+        this.closeModal();
+        this.openToast();
       });
+    this.load();
+  }
+
+  deleteOrder(orderId: string) {
+    trpc.cart.deleteOrder.mutate({ orderId }).then(() => {
+      this.message = 'Delete order success';
+      this.openToast();
+      this.load();
+    });
+  }
+
+  openToast() {
+    const myToast = new bootstrap.Toast(
+      document.getElementById('liveToast') as HTMLElement,
+      {}
+    );
+    myToast.show();
+  }
+  async getUserById(id: string) {
+    await trpc.user.getUserbyId
+      .mutate({
+        id: id,
+      })
+      .then((res) => {
+       this.infoCustomer= res;
+      });
+    return null;
   }
 }

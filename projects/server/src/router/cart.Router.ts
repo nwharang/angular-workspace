@@ -84,4 +84,14 @@ export const cartRoute = router({
     .mutation(({ ctx, input }) => {
       return new CartController().updateOrderStatus(ctx, input);
     }),
+  deleteOrder: publicProcedure
+    .use(AuthMiddleware)
+    .input(
+      z.object({
+        orderId: z.string(),
+      })
+    )
+    .mutation(({ ctx, input }) => {
+      return new CartController().deleteOrder(ctx, input);
+    }),
 });

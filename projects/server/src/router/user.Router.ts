@@ -15,7 +15,11 @@ export const userRoute = router({
     .mutation(({ ctx, input }) => {
       return new UserController().changeLocalization(ctx, input);
     }),
-  getUserInfo: publicProcedure.use(AuthMiddleware).query(({ ctx }) => {
-    return new UserController().getUserInfo(ctx);
-  }),
+
+  getUserbyId: publicProcedure
+    .use(AuthMiddleware)
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return new UserController().getUserbyId(ctx, input);
+    }),
 });
