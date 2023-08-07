@@ -5,14 +5,15 @@ export default class ProductController {
     ctx: Context,
     input: {
       page: number;
-      filter: { string: string | null; sort: number | null };
+      filter: { string: string | null; sort: number | null },
+      isAll: boolean | null;
     }
   ) {
     const page = Number(input.page) - 1 || 0;
-    const itemPerPage = 20;
+    const itemPerPage = 5;
     const items = await ctx.prisma.product.findMany({
       skip: page * itemPerPage,
-      take: itemPerPage,
+      take: !input.isAll ? itemPerPage : undefined,
       where: input.filter?.string
         ? {
             name: {

@@ -193,5 +193,26 @@ export default class CartController {
     });
   }
 
+  getOrderByUser(ctx: authContext) {
+    const shoppingSession = ctx.prisma.shoppingSession.findUnique({
+      where: {
+        userId: ctx.user?.id,
+      },
+    });
+    if (!shoppingSession) return;
+    let shoppingSessionId: string | undefined;
+    shoppingSession.then((res) => {
+      shoppingSessionId = res!.id;
+    });
 
+    const order = ctx.prisma.order.findMany({
+      where: {
+        shoppingSessionId: shoppingSessionId,
+      }
+    });
+    if (order) {
+      return order;
+    }
+    return null;
+  }
 }

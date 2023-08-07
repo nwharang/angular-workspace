@@ -244,14 +244,15 @@ export class OrdersComponent {
     await trpc.cart.getListOrders.query().then((res) => {
       this.orderItems = res as any;
     });
+    
   }
 
   getDetail(item: Cart) {
     this.orderDetail = item as any;
     console.log(this.orderDetail);
-    this.getUserById(item.ShoppingSession!.userId)
+    this.getUserById(item.ShoppingSession!.userId);
     console.log(this.infoCustomer);
-    
+
     this.cartItemsDetail = item.ShoppingSession!.CartItem;
     this.orderDetail.total = this.cartItemsDetail.reduce(
       (a, b) => a + Number(b.qty * b.Product.price),
@@ -282,18 +283,32 @@ export class OrdersComponent {
       })
       .then(() => {
         this.message = 'Update status success';
-        this.closeModal();
         this.openToast();
+        this.closeModal();
+      })
+      .catch((err) => {
+        this.message = err.message;
+        this.openToast();
+      })
+      .finally(() => {
+        this.load();
       });
-    this.load();
   }
 
   deleteOrder(orderId: string) {
-    trpc.cart.deleteOrder.mutate({ orderId }).then(() => {
-      this.message = 'Delete order success';
-      this.openToast();
-      this.load();
-    });
+    trpc.cart.deleteOrder
+      .mutate({ orderId })
+      .then(() => {
+        this.message = 'Delete order success';
+        this.openToast();
+      })
+      .catch((err) => {
+        this.message = err.message;
+        this.openToast();
+      })
+      .finally(() => {
+        this.load();
+      });
   }
 
   openToast() {
@@ -309,8 +324,9 @@ export class OrdersComponent {
         id: id,
       })
       .then((res) => {
-       this.infoCustomer= res;
+        this.infoCustomer = res;
       });
     return null;
   }
+
 }

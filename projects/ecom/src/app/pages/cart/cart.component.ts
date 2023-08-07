@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { Prisma, ShoppingSession } from '@prisma/client';
 import { trpc } from '~app/src/trpcClient';
 
@@ -210,7 +211,7 @@ export class CartComponent {
   cartItem: Cart[] = [];
   message: string = '';
   Checkout = false;
-  constructor() {
+  constructor(private router: Router) {
     this.load();
   }
 
@@ -284,6 +285,10 @@ export class CartComponent {
       .catch((err) => {
         this.message = err.message;
         this.openToast();
+      })
+      .finally(() => {
+        this.Checkout = false;
+        this.router.navigate(['/auth']);
       });
   }
 
@@ -310,5 +315,4 @@ export class CartComponent {
     );
     myToast.show();
   }
-
 }

@@ -32,8 +32,8 @@
                                     </span>
                                 </p>
                                 <div>
-                                    <button class="btn btn-warning me-2">Add to Cart</button>
-                                    <button class="btn btn-outline-warning">Buy Now</button>
+                                    <button class="btn btn-warning me-2" (click)="addToCart(product!.id)">Add to
+                                        Cart</button>
                                 </div>
                             </div>
                         </div>
@@ -148,5 +148,18 @@
 
         </div>
 
+    </div>
+    <div id="liveToastBtn" class="toast-container position-fixed  top-50 end-0 p-3" style="--bs-bg-opacity: 1">
+        <div id="liveToast" class="toast align-items-center text-dark bg-light border rournded-4 " role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-warning  text-dark" >
+                <strong class="me-auto" style="color: #521a4d;">BangDang</strong>
+                <small>Notification </small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body  bg-light">
+                {{ message }}
+            </div>
+        </div>
     </div>
 </section>

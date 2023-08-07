@@ -12,6 +12,7 @@ export const productRoute = router({
           string: z.string().nullable(),
           sort: z.number().nullable(),
         }),
+        isAll: z.boolean().nullable(),
       })
     )
     .query(({ ctx, input }) => {
@@ -27,7 +28,7 @@ export const productRoute = router({
     .query(({ ctx, input }) => {
       return new ProductController().getProductById(ctx, input);
     }),
-  
+
   create: publicProcedure
     .input(
       z.object({

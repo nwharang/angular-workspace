@@ -94,4 +94,8 @@ export const cartRoute = router({
     .mutation(({ ctx, input }) => {
       return new CartController().deleteOrder(ctx, input);
     }),
+
+  getOrderByUser: publicProcedure.use(AuthMiddleware).query(({ ctx }) => {
+    return new CartController().getOrderByUser(ctx);
+  }),
 });

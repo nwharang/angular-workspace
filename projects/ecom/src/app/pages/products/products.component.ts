@@ -130,7 +130,7 @@ type TData = {
         </div>
         <ngb-pagination
           *ngIf="data"
-          [pageSize]="20"
+          [pageSize]="5"
           [collectionSize]="data.allItem"
           (pageChange)="pageChange($event)"
           class="container d-flex justify-content-center"
@@ -162,6 +162,7 @@ export class ProductsComponent {
       .query({
         page: this.page,
         filter: this.filterCase || undefined,
+        isAll: false,
       })
       .then((res) => {
         this.productList = res.items;

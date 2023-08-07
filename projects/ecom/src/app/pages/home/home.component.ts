@@ -24,9 +24,10 @@ export class HomeComponent {
           string: null,
           sort: null,
         },
+        isAll: false,
       })
       .then((res) => {
-        this.productList = res.items;
+        this.productList = res.items.slice(0, 4);
       });
   }
   async addToCart(id: string) {

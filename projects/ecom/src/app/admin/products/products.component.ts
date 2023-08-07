@@ -242,6 +242,7 @@ export class ProductsComponent {
           string: '',
           sort: 0,
         },
+        isAll: true,
       })
       .then((res) => {
         this.productList = res.items;
