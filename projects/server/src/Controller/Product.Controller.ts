@@ -10,7 +10,7 @@ export default class ProductController {
     }
   ) {
     const page = Number(input.page) - 1 || 0;
-    const itemPerPage = 5;
+    const itemPerPage = 10;
     const items = await ctx.prisma.product.findMany({
       skip: page * itemPerPage,
       take: !input.isAll ? itemPerPage : undefined,

@@ -85,22 +85,22 @@ declare let bootstrap: any;
                 <input
                   type="text"
                   [(ngModel)]="product.image"
-                  name="description"
-                  #description="ngModel"
+                  name="image"
+                  #image="ngModel"
                   required
                   minlength="3"
                   class="form-control"
                   aria-describedby="helpId"
                 />
                 <div
-                  *ngIf="description.invalid && description.touched"
+                  *ngIf="image.invalid && image.touched"
                   class="text-danger"
                 >
-                  <div *ngIf="description.errors?.required">
-                    Description is required
+                  <div *ngIf="image.errors?.required">
+                    Image is required
                   </div>
-                  <div *ngIf="description.errors?.minlength">
-                    Description must be at least 3 characters
+                  <div *ngIf="image.errors?.minlength">
+                    Image must be at least 3 characters
                   </div>
                 </div>
               </div>

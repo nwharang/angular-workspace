@@ -130,7 +130,7 @@ type TData = {
         </div>
         <ngb-pagination
           *ngIf="data"
-          [pageSize]="5"
+          [pageSize]="10"
           [collectionSize]="data.allItem"
           (pageChange)="pageChange($event)"
           class="container d-flex justify-content-center"
